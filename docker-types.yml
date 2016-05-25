@@ -4,6 +4,9 @@ template_name: docker-types
 template_author: Fastconnect
 template_version: 1.0.0-SNAPSHOT
 
+imports:
+  - tosca-normative-types:1.0.0-SNAPSHOT
+
 description: >
   Contains the non-normative definition of Docker-related types as
   currently supported in Alien 4 Cloud.
@@ -17,12 +20,21 @@ artifact_types:
 
 node_types:
   tosca.nodes.Container.Application.Docker:
+    abstract: true
     derived_from: tosca.nodes.Container.Application
     description: >
       The TOSCA Container Application Docker node represents an application running in a Docker container.
-      Properties defined in the node will be interpreted as entrypoint's arguments.
+      Properties defined in the node will be interpreted as the entrypoint's arguments.
+    tags:
+      icon: /images/docker.png
     requirements:
       - host: tosca.capabilities.Container.Docker
         relationship: tosca.relationships.HostedOn
         lower_bound: 0
         upper_bound: 1
+
+capability_types:
+  tosca.capabilities.Container.Docker:
+    derived_from: tosca.capabilities.Container
+    description: >
+      The capacity to host and run Docker containers.
