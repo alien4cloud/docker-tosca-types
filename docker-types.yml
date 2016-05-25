@@ -1,0 +1,28 @@
+tosca_definitions_version: alien_dsl_1_1_0
+
+template_name: docker-types
+template_author: Fastconnect
+template_version: 1.0.0-SNAPSHOT
+
+description: >
+  Contains the non-normative definition of Docker-related types as
+  currently supported in Alien 4 Cloud.
+
+artifact_types:
+  tosca.artifacts.Deployment.Image.Container.Docker:
+    description: Docker Container Image
+    derived_from: tosca.artifacts.Deployment.Image
+    mime_type: application/docker-img
+    file_ext: [ dockerimg ]
+
+node_types:
+  tosca.nodes.Container.Application.Docker:
+    derived_from: tosca.nodes.Container.Application
+    description: >
+      The TOSCA Container Application Docker node represents an application running in a Docker container.
+      Properties defined in the node will be interpreted as entrypoint's arguments.
+    requirements:
+      - host: tosca.capabilities.Container.Docker
+        relationship: tosca.relationships.HostedOn
+        lower_bound: 0
+        upper_bound: 1
