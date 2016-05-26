@@ -1,0 +1,73 @@
+tosca_definitions_version: alien_dsl_1_1_0
+template_name: nodecellar-docker-type
+template_author: Fastconnect
+template_version: 1.0.0-SNAPSHOT
+
+description: >
+  TOSCA simple profile with Nodecellar on the same host using Docker containers
+
+imports:
+  - tosca-normative-types:1.0.0-SNAPSHOT
+  - docker-types:1.0.0-SNAPSHOT
+
+node_types:
+  NodecellarDocker:
+    derived_from: tosca.nodes.Container.Application.DockerContainer
+    properties:
+      docker_cli_args:
+        type: alien.datatypes.docker.arguments.Nodecellar
+      log_level:
+        type: string
+        default: "INFO"
+    requirements:
+      - mongo_db: alien.capabilities.endpoint.Mongo
+        type: tosca.relationships.ConnectsTo
+        lower_bound: 1
+        upper_bound: unbounded
+    interfaces:
+      Standard:
+        create: afraisse/nodecellar.dockerimg
+        start:
+          inputs:
+            LOG_LEVEL: { get_property: [SELF, log_level] }
+
+  MongoDocker:
+    derived_from: tosca.nodes.Container.Application.DockerContainer
+    capabilities:
+      mongo_db:
+        type: alien.capabilities.endpoint.docker.Mongo
+        properties:
+          port: 2107
+    interfaces:
+      Standard:
+        create: afraisse/mongo.dockerimg
+        start:
+          inputs:
+            CONTAINER_PORT: { get_property: [self, mongo_db, container_port] }
+            HOST_PORT: { get_property: [self, mongo_db, host_port] }
+          implementation: mongo.dockerimg
+
+data_types:
+  alien.datatypes.docker.arguments.Nodecellar:
+    properties:
+      dns:
+        type: string
+        required: false
+      lxc-conf:
+        type: string
+        required: false
+
+capability_types:
+  alien.capabilities.endpoint.Mongo:
+    derived_from: tosca.capabilities.Endpoint
+  alien.capabilities.endpoint.docker.Mongo:
+    derived_from: alien.capabilities.endpoint.Mongo
+    description: >
+      Capability to connect to a Docker-supported Mongo database through bridge networking.
+    properties:
+      docker_port_mapping:
+        type: integer
+        default: 0
+      port:
+        type: integer
+        default: 2107

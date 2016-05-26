@@ -15,11 +15,11 @@ artifact_types:
   tosca.artifacts.Deployment.Image.Container.Docker:
     description: Docker Container Image
     derived_from: tosca.artifacts.Deployment.Image
-    mime_type: application/docker-img
+    mime_type: application/docker
     file_ext: [ dockerimg ]
 
 node_types:
-  tosca.nodes.Container.Application.Docker:
+  tosca.nodes.Container.Application.DockerContainer:
     abstract: true
     derived_from: tosca.nodes.Container.Application
     description: >
@@ -27,6 +27,13 @@ node_types:
       Properties defined in the node will be interpreted as the entrypoint's arguments.
     tags:
       icon: /images/docker.png
+    properties:
+      docker_cli_args:
+        type: map
+        required: false
+        entry_schema:
+          description: Docker CLI arguments.
+          type: string
     requirements:
       - host: tosca.capabilities.Container.Docker
         relationship: tosca.relationships.HostedOn
