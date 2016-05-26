@@ -45,7 +45,6 @@ node_types:
           inputs:
             CONTAINER_PORT: { get_property: [self, mongo_db, container_port] }
             HOST_PORT: { get_property: [self, mongo_db, host_port] }
-          implementation: mongo.dockerimg
 
 data_types:
   alien.datatypes.docker.arguments.Nodecellar:
