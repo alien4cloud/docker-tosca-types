@@ -11,14 +11,19 @@ imports:
   - docker-types:1.0.0-SNAPSHOT
 
 node_types:
-  NodecellarDocker:
+  alien.nodes.Application.Docker.Nodecellar:
     derived_from: tosca.nodes.Container.Application.DockerContainer
     properties:
-      docker_cli_args:
-        type: alien.datatypes.docker.arguments.Nodecellar
-      log_level:
-        type: string
-        default: "INFO"
+      docker_options:
+        type: alien.datatypes.docker.cli-args.Nodecellar
+      docker_env_vars:
+        type: map
+        entry_schema:
+          description: Environment variables for the Docker container.
+          type: string
+        default:
+          MONGO_HOST: { get_property: [REQ_TARGET, mongo_db, host] }
+          MONGO_PORT: { get_property: [REQ_TARGET, mongo_db, port] }
     requirements:
       - mongo_db: alien.capabilities.endpoint.Mongo
         type: tosca.relationships.ConnectsTo
@@ -26,12 +31,9 @@ node_types:
         upper_bound: unbounded
     interfaces:
       Standard:
-        create: afraisse/nodecellar.dockerimg
-        start:
-          inputs:
-            LOG_LEVEL: { get_property: [SELF, log_level] }
+        create: afraisse/nodecellar:latest.dockerimg
 
-  MongoDocker:
+  alien.nodes.Application.Docker.Mongo:
     derived_from: tosca.nodes.Container.Application.DockerContainer
     capabilities:
       mongo_db:
@@ -40,14 +42,10 @@ node_types:
           port: 2107
     interfaces:
       Standard:
-        create: afraisse/mongo.dockerimg
-        start:
-          inputs:
-            CONTAINER_PORT: { get_property: [self, mongo_db, container_port] }
-            HOST_PORT: { get_property: [self, mongo_db, host_port] }
+        create: mongo:latest.dockerimg
 
 data_types:
-  alien.datatypes.docker.arguments.Nodecellar:
+  alien.datatypes.docker.cli-args.Nodecellar:
     properties:
       dns:
         type: string
@@ -64,8 +62,9 @@ capability_types:
     description: >
       Capability to connect to a Docker-supported Mongo database through bridge networking.
     properties:
-      docker_port_mapping:
+      docker_bridge_port_mapping:
         type: integer
+        description: Port used to bridge to the container's endpoint.
         default: 0
       port:
         type: integer

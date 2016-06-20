@@ -28,17 +28,48 @@ node_types:
     tags:
       icon: /images/docker.png
     properties:
-      docker_cli_args:
+      docker_options:
         type: map
         required: false
         entry_schema:
-          description: Docker CLI arguments.
+          description: Arbitrary command-line options for the docker run command.
           type: string
+      docker_run_args:
+        type: list
+        required: false
+        entry_schema:
+          description: Docker run arguments. Allows safe usage of Docker ENTRYPOINT statement in the Dockerfile.
+          type: string
+      docker_run_cmd:
+        type: string
+        required: false
+        description: Docker run command. Will override the Dockerfile CMD statement.
+      docker_env_vars:
+        type: map
+        required: false
+        entry_schema:
+          description: Environment variables for the Docker container.
+          type: string
+      cpu_share:
+        type: float
+        required: true
+        default: 1.0
+      mem_share:
+        type: integer
+        required: true
+        default: 128
+      disk_share:
+        type: integer
+        required: false
     requirements:
       - host: tosca.capabilities.Container.Docker
         relationship: tosca.relationships.HostedOn
         lower_bound: 0
         upper_bound: 1
+
+data_types:
+  alien.datatypes.EmptyMap:
+  alien.datatypes.EmptyList:
 
 capability_types:
   tosca.capabilities.Container.Docker:
