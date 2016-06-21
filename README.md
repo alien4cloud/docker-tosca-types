@@ -13,17 +13,34 @@ The node_type *tosca.nodes.Container.Application.DockerContainer* is derived_fro
 
 ### Defining operations
 - The implementation value of the *Create* operation takes the Docker image, as explained below.
-- Inputs given to the *Start* operation are planned to used by the orchestrators as arguments for the container **Entrypoint**.
-ATM, we do not support giving a plain command to the container.
-
-### Docker CLI arguments
-It is possible to define arguments for the Docker CLI using the *docker_cli_args* property as a map of key/pairs. It is also possible
-(and recommended) to create a custom datatype if specific CLI args are expected for the application ([see the Nodecellar example](/examples/nodecellar_types_sample.yml)).
+- We reverted from giving Inputs to the *Start* arguments for the orchestrator. Use the new *docker_options, docker_env_vars or docker_run_args* instead.
+- To provide the container with a command to run, use the *docker_run_cmd* properties.
 
 ### Docker images
 We defined a specific artifact to represent Docker images. This allow us to provide the path to a Docker image to
 the create operation. A docker path recognizable by alien is as follow: **[registry/][repository/]image[:tag].dockerimg**.
 While feeling like a workaround, the *.dockerimg* file extension is mandatory for now.
+
+### Tuning the container
+
+#### Docker CLI arguments
+It is possible to define arguments for the Docker CLI using the *docker_cli_args* property as a map of key/pairs. It is also possible
+(and recommended) to create a custom datatype if specific CLI args are expected for the application ([see the Nodecellar example](/examples/nodecellar_types_sample.yml)).
+
+#### Docker run command
+To define a command to be executed inside the container, use the **docker_run_cmd** property. This will override a CMD statement in the container's Dockerfile.
+
+#### Docker run args
+If your container's Dockerfile uses an ENTRYPOINT, you can specify arguments using the **docker_run_args** property. Those will be appended to the *docker run* command.
+
+#### Docker env variables
+To set environment variables inside the container, use the **docker_env_vars** property map.
+
+### Getting a property from a requirement target
+
+To implement a dependency from a container to another component in a flexible way, we want to allow users to use either environment variables, docker run arguments or a custom command, as they see fit. To achieve this, we need a way to request a property of a requirement TARGET from within the SOURCE properties definition. see [Nodecellar sample](/examples/nodecellar_types_sample.yml) for an example.
+This means that within a node definition, given a requirement name, we want to access a property defined in the TARGET of such requirement.  For example :
+`{ get_property: [REQ_TARGET, mongo_db, port] }` should return the *port* property of the TARGET of the *mongo_db* requirement, which is a capability. If the property cannot be found, we will look for it in the TARGET node itself.
 
 ### Defining capabilities
 #### Modularity
