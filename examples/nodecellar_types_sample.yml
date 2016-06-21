@@ -4,7 +4,7 @@ template_author: Fastconnect
 template_version: 1.0.0-SNAPSHOT
 
 description: >
-  TOSCA simple profile with Nodecellar on the same host using Docker containers
+  TOSCA simple profile with Nodecellar using Docker containers
 
 imports:
   - tosca-normative-types:1.0.0-SNAPSHOT
@@ -22,7 +22,7 @@ node_types:
           description: Environment variables for the Docker container.
           type: string
         default:
-          MONGO_HOST: { get_property: [REQ_TARGET, mongo_db, host] }
+          MONGO_HOST: { get_property: [REQ_TARGET, mongo_db, ip_address] }
           MONGO_PORT: { get_property: [REQ_TARGET, mongo_db, port] }
     requirements:
       - mongo_db: alien.capabilities.endpoint.Mongo
