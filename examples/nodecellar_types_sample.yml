@@ -29,6 +29,12 @@ node_types:
         type: tosca.relationships.ConnectsTo
         lower_bound: 1
         upper_bound: unbounded
+    capabilities:
+      nodecellar_app:
+        type: alien.capabilities.endpoint.Docker
+        properties:
+          port: 3000
+          docker_bridge_port_mapping: 0
     interfaces:
       Standard:
         create: afraisse/nodecellar:latest.dockerimg

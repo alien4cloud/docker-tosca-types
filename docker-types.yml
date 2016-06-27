@@ -76,3 +76,13 @@ capability_types:
     derived_from: tosca.capabilities.Container
     description: >
       The capacity to host and run Docker containers.
+  alien.capabilities.endpoint.Docker:
+    derived_from: tosca.capabilities.Endpoint
+    descritpion: >
+      Endpoint generic capability for a Docker container, allowing implementation
+      of Docker bridge networking.
+    properties:
+      docker_bridge_port_mapping:
+        type: integer
+        description: Port used to bridge to the container's endpoint.
+        default: 0
