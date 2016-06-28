@@ -1,4 +1,4 @@
-tosca_definitions_version: alien_dsl_1_1_0
+tosca_definitions_version: alien_dsl_1_2_0
 template_name: nodecellar-docker-type
 template_author: Fastconnect
 template_version: 1.0.0-SNAPSHOT
@@ -18,34 +18,31 @@ node_types:
         type: alien.datatypes.docker.cli-args.Nodecellar
       docker_env_vars:
         type: map
+        description: Environment variables for the Docker container.
         entry_schema:
-          description: Environment variables for the Docker container.
           type: string
         default:
-          MONGO_HOST: { get_property: [REQ_TARGET, mongo_db, ip_address] }
-          MONGO_PORT: { get_property: [REQ_TARGET, mongo_db, port] }
+          LOG_LEVEL: DEBUG
     requirements:
       - mongo_db: alien.capabilities.endpoint.Mongo
         type: tosca.relationships.ConnectsTo
-        lower_bound: 1
-        upper_bound: unbounded
+        occurrences: [1, 1]
     capabilities:
       nodecellar_app:
-        type: alien.capabilities.endpoint.Docker
-        properties:
-          port: 3000
-          docker_bridge_port_mapping: 0
+        type: alien.capabilities.endpoint.docker.Nodecellar
     interfaces:
       Standard:
-        create: afraisse/nodecellar:latest.dockerimg
+        create:
+          inputs:
+            ENV_MONGO_HOST: { get_property: [REQ_TARGET, mongo_db, ip_address] }
+            ENV_MONGO_PORT: { get_property: [REQ_TARGET, mongo_db, port] }
+          implementation: afraisse/nodecellar:latest.dockerimg
 
   alien.nodes.Application.Docker.Mongo:
     derived_from: tosca.nodes.Container.Application.DockerContainer
     capabilities:
       mongo_db:
         type: alien.capabilities.endpoint.docker.Mongo
-        properties:
-          port: 2107
     interfaces:
       Standard:
         create: mongo:latest.dockerimg
@@ -56,6 +53,7 @@ data_types:
       dns:
         type: string
         required: false
+        default: "test-dns"
       lxc-conf:
         type: string
         required: false
@@ -75,3 +73,13 @@ capability_types:
       port:
         type: integer
         default: 2107
+  alien.capabilities.endpoint.docker.Nodecellar:
+    derived_from: alien.capabilities.endpoint.Docker
+    properties:
+      docker_bridge_port_mapping:
+        type: integer
+        description: Port used to bridge to the container's endpoint.
+        default: 0
+      port:
+        type: integer
+        default: 3000
