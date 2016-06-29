@@ -16,13 +16,19 @@ node_types:
     properties:
       docker_options:
         type: alien.datatypes.docker.cli-args.Nodecellar
+        default:
+          dns: test-dns
+          lxc-conf: test-conf
       docker_env_vars:
         type: map
         description: Environment variables for the Docker container.
         entry_schema:
           type: string
         default:
-          LOG_LEVEL: DEBUG
+          LOG_LEVEL:
+      dev_prop:
+        type: string
+        default: test-prop
     requirements:
       - mongo_db: alien.capabilities.endpoint.Mongo
         type: tosca.relationships.ConnectsTo
@@ -36,6 +42,8 @@ node_types:
           inputs:
             ENV_MONGO_HOST: { get_property: [REQ_TARGET, mongo_db, ip_address] }
             ENV_MONGO_PORT: { get_property: [REQ_TARGET, mongo_db, port] }
+            ENV_MONGO_DEV: { get_property: [SELF, dev_prop] }
+            ENV_NODECELLAR_PORT: 3000
           implementation: afraisse/nodecellar:latest.dockerimg
 
   alien.nodes.Application.Docker.Mongo:
