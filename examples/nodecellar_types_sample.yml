@@ -14,11 +14,12 @@ node_types:
   alien.nodes.Application.Docker.Nodecellar:
     derived_from: tosca.nodes.Container.Application.DockerContainer
     properties:
+      docker_run_cmd:
+        type: string
+        default: "cd /nodecellar && nodejs server.js"
       docker_options:
         type: alien.datatypes.docker.cli-args.Nodecellar
-        default:
-          dns: test-dns
-          lxc-conf: test-conf
+        required: false
       docker_env_vars:
         type: map
         description: Environment variables for the Docker container.
@@ -44,7 +45,7 @@ node_types:
             ENV_MONGO_PORT: { get_property: [REQ_TARGET, mongo_db, port] }
             ENV_MONGO_DEV: { get_property: [SELF, dev_prop] }
             ENV_NODECELLAR_PORT: 3000
-          implementation: afraisse/nodecellar:latest.dockerimg
+          implementation: afraisse/nodecellar:exp.dockerimg
 
   alien.nodes.Application.Docker.Mongo:
     derived_from: tosca.nodes.Container.Application.DockerContainer
@@ -60,8 +61,7 @@ data_types:
     properties:
       dns:
         type: string
-        required: false
-        default: "test-dns"
+        required:  false
       lxc-conf:
         type: string
         required: false
@@ -80,7 +80,7 @@ capability_types:
         default: 0
       port:
         type: integer
-        default: 2107
+        default: 27017
   alien.capabilities.endpoint.docker.Nodecellar:
     derived_from: alien.capabilities.endpoint.Docker
     properties:
