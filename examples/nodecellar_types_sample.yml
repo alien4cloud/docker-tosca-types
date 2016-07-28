@@ -40,7 +40,6 @@ node_types:
           inputs:
             ENV_MONGO_HOST: { get_property: [REQ_TARGET, mongo_db, ip_address] }
             ENV_MONGO_PORT: { get_property: [REQ_TARGET, mongo_db, port] }
-            ENV_MONGO_DEV: { get_property: [SELF, dev_prop] }
             ENV_NODECELLAR_PORT: 3000
           implementation: afraisse/nodecellar:exp.dockerimg
 
