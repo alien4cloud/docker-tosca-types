@@ -1,5 +1,5 @@
 tosca_definitions_version: alien_dsl_1_2_0
-template_name: nodecellar-docker-type
+template_name: nodecellar-docker-types
 template_author: Fastconnect
 template_version: 1.0.0-SNAPSHOT
 
@@ -27,9 +27,6 @@ node_types:
           type: string
         default:
           LOG_LEVEL:
-      dev_prop:
-        type: string
-        default: test-prop
     requirements:
       - mongo_db: alien.capabilities.endpoint.Mongo
         type: tosca.relationships.ConnectsTo

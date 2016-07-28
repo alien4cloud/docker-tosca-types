@@ -1,0 +1,53 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0_wd03
+description: Alien4Cloud template of a Nodecellar + MongoDB topology using Docker containers.
+template_name: nodecellar-template
+template_version: 1.0.0-SNAPSHOT
+template_author: Fastconnect
+
+imports:
+  - nodecellar-docker-types:1.0.0-SNAPSHOT
+  - tosca-normative-types:1.0.0-SNAPSHOT
+  - docker-types:1.0.0-SNAPSHOT
+
+topology_template:
+  node_templates:
+    Mongo:
+      type: alien.nodes.Application.Docker.Mongo
+      properties:
+        mem_share: 128
+        cpu_share: 1.0
+      capabilities:
+        mongo_db:
+          properties:
+            protocol: tcp
+            port: 27017
+            initiator: source
+            network_name: PRIVATE
+            docker_bridge_port_mapping: 0
+            secure: false
+    Nodecellar:
+      type: alien.nodes.Application.Docker.Nodecellar
+      properties:
+        docker_run_cmd: cd /nodecellar && nodejs server.js
+        mem_share: 128
+        docker_env_vars:
+          LOG_LEVEL: INFO
+        cpu_share: 1.0
+      requirements:
+        - mongo_db:
+            node: Mongo
+            capability: alien.capabilities.endpoint.docker.Mongo
+            relationship: tosca.relationships.ConnectsTo
+      capabilities:
+        nodecellar_app:
+          properties:
+            protocol: tcp
+            port: 3000
+            initiator: source
+            network_name: PRIVATE
+            docker_bridge_port_mapping: 0
+            secure: false
+  outputs:
+    Nodecellar_URL:
+      description: Nodecellar's URL.
+      value: { get_attribute: [Nodecellar, endpoint] }
