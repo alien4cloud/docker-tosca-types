@@ -19,7 +19,7 @@ The node_type *tosca.nodes.Container.Application.DockerContainer* is derived_fro
   - **ARG_{INPUT_NAME}** will result in the input value being passed as an ENTRYPOINT argument (those are unamed)
   - **OPT_{INPUT_NAME}** will result in an arbitrary command-line option named *INPUT_NAME* for the docker run command.
 
-  Inputs should be used for technical configuration (such as a port definition) or configuration that should be auto-resolved by the orchestrator. For user specific configuration, use the new *docker_options, docker_env_vars or docker_run_args* instead. See [Nodecellar sample](/examples/nodecellar_types_sample.yml) for an example.
+  Inputs should be used for technical configuration (such as a port definition) or configuration that should be auto-resolved by the orchestrator. For user specific configuration, use the new *docker_options, docker_env_vars or docker_run_args* instead. See [Nodecellar sample](nodecellar-sample-types/nodecellar-types.yml) for an example.
 - To provide the container with a custom command to run, use the *docker_run_cmd* property.
 
 ### Docker images
@@ -39,7 +39,7 @@ We added a set of properties to allow user configuration of the containers withi
 
 #### Docker CLI arguments
 It is possible to define arguments for the Docker CLI using the *docker_cli_args* property as a map of key/pairs. It is also possible
-(and recommended) to create a custom datatype if specific CLI args are expected for the application ([see the Nodecellar example](/examples/nodecellar_types_sample.yml)).
+(and recommended) to create a custom datatype if specific CLI args are expected for the application ([see the Nodecellar example](nodecellar-sample-types/nodecellar-types.yml)).
 
 #### Docker run command
 To define a command to be executed inside the container, use the **docker_run_cmd** property. This will override a CMD statement in the container's Dockerfile. The value will be wrapped into `/bin/sh -c '${cmd}'`.
@@ -52,7 +52,7 @@ To set environment variables inside the container, use the **docker_env_vars** p
 
 ### Defining capabilities
 #### Modularity
-We aim for topologies where Docker containers and non-docker apps can live together. As such, capabilities for Docker containers should inherit usual capabilities. For instance, in the [Nodecellar sample](/examples/nodecellar_types_sample.yml), we defined :
+We aim for topologies where Docker containers and non-docker apps can live together. As such, capabilities for Docker containers should inherit usual capabilities. For instance, in the [Nodecellar sample](nodecellar-sample-types/nodecellar-types.yml), we defined :
 - The **alien.capabilities.endpoint.Mongo** capability, which inherits *tosca.capabilities.Endpoint* and is the generic ability to expose a Mongo database,
 - The **alien.capabilities.endpoint.docker.Mongo** capability, which derives from the latter. This capability is exposed by the *mongo_db* capability of the *MongoDocker* Node-type.
 Using inheritance, this means that any other Node-type requiring *alien.capabilities.endpoint.Mongo* can use the MongoDocker through a classic **ConnectsTo** relationship.
