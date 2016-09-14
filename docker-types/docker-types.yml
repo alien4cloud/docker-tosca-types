@@ -1,8 +1,8 @@
-tosca_definitions_version: alien_dsl_1_2_0
+tosca_definitions_version: alien_dsl_1_3_0
 
 template_name: docker-types
 template_author: Fastconnect
-template_version: 1.0.0-SNAPSHOT
+template_version: 1.1.0-SNAPSHOT
 
 imports:
   - tosca-normative-types:1.0.0-SNAPSHOT
@@ -15,8 +15,6 @@ artifact_types:
   tosca.artifacts.Deployment.Image.Container.Docker:
     description: Docker Container Image
     derived_from: tosca.artifacts.Deployment.Image
-    mime_type: application/docker
-    file_ext: [ dockerimg ]
 
 node_types:
   tosca.nodes.Container.Application.DockerContainer:
@@ -66,10 +64,28 @@ node_types:
         type: string
         description: >
           Reflects the external endpoint assigned to this container.
+    capabilities:
+      attach: alien.capabilities.DockerVolumeAttachment
     requirements:
       - host: tosca.capabilities.Container.Docker
         relationship: tosca.relationships.HostedOn
         occurrences: [0, 1]
+  alien.nodes.DockerExtVolume:
+    derived_from: tosca.nodes.Root
+    tags:
+      icon: /images/volume.png
+    properties:
+      size:
+        type: scalar-unit.size
+        constraints:
+          - greater_or_equal: 1 GB
+      volume_name:
+        type: string
+        description: Name of the volume.  If it does not exist, it is created implicitly. Otherwise, the existing volume is reused.
+        required: false
+    requirements:
+      attachment:
+        type: alien.capabilities.DockerVolumeAttachment
 
 data_types:
   alien.datatypes.EmptyMap:
@@ -90,3 +106,18 @@ capability_types:
         type: integer
         description: Port used to bridge to the container's endpoint.
         default: 0
+  alien.capabilities.DockerVolumeAttachment:
+    derived_from: tosca.capabilities.Attachment
+    description: >
+      Capability to mount a Docker volume
+    valid_source_types: [ alien.nodes.DockerExtVolume ]
+
+relationship_types:
+  alien.relationships.MountDockerVolume:
+    derived_from: tosca.relationships.AttachTo
+    valid_target_types: [ alien.capabilities.DockerVolumeAttachment ]
+    properties:
+      container_path:
+        type: string
+        required: true
+        description: Specifies where the volume is mounted inside the container.
