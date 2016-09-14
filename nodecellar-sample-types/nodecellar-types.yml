@@ -1,14 +1,19 @@
-tosca_definitions_version: alien_dsl_1_2_0
+tosca_definitions_version: alien_dsl_1_3_0
 template_name: nodecellar-docker-types
 template_author: Fastconnect
-template_version: 1.0.0-SNAPSHOT
+template_version: 1.1.0-SNAPSHOT
 
 description: >
   TOSCA simple profile with Nodecellar using Docker containers
 
 imports:
   - tosca-normative-types:1.0.0-SNAPSHOT
-  - docker-types:1.0.0-SNAPSHOT
+  - docker-types:1.1.0-SNAPSHOT
+
+repositories:
+  docker:
+    url: https://hub.docker.com/
+    type: docker
 
 node_types:
   alien.nodes.Application.Docker.Nodecellar:
@@ -41,7 +46,10 @@ node_types:
             ENV_MONGO_HOST: { get_property: [REQ_TARGET, mongo_db, ip_address] }
             ENV_MONGO_PORT: { get_property: [REQ_TARGET, mongo_db, port] }
             ENV_NODECELLAR_PORT: 3000
-          implementation: afraisse/nodecellar:exp.dockerimg
+          implementation:
+            file: afraisse/nodecellar:exp
+            repository: docker
+            type: tosca.artifacts.Deployment.Image.Container.Docker
 
   alien.nodes.Application.Docker.Mongo:
     derived_from: tosca.nodes.Container.Application.DockerContainer
@@ -50,7 +58,11 @@ node_types:
         type: alien.capabilities.endpoint.docker.Mongo
     interfaces:
       Standard:
-        create: mongo:latest.dockerimg
+        create:
+          implementation:
+            file: mongo:latest
+            repository: docker
+            type: tosca.artifacts.Deployment.Image.Container.Docker
 
 data_types:
   alien.datatypes.docker.cli-args.Nodecellar:
