@@ -71,18 +71,18 @@ node_types:
         relationship: tosca.relationships.HostedOn
         occurrences: [0, 1]
   alien.nodes.DockerExtVolume:
-    derived_from: tosca.nodes.Root
+    derived_from: tosca.nodes.BlockStorage
     tags:
       icon: /images/volume.png
     properties:
-      size:
-        type: scalar-unit.size
-        constraints:
-          - greater_or_equal: 1 GB
       volume_name:
         type: string
         description: Name of the volume.  If it does not exist, it is created implicitly. Otherwise, the existing volume is reused.
         required: false
+      device:
+        type: string
+        required: false
+        default: ""
     requirements:
       attachment:
         type: alien.capabilities.DockerVolumeAttachment
