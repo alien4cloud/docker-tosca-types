@@ -23,9 +23,19 @@ The node_type *tosca.nodes.Container.Application.DockerContainer* is derived_fro
 - To provide the container with a custom command to run, use the *docker_run_cmd* property.
 
 ### Docker images
-We defined a specific artifact to represent Docker images. This allow us to provide the path to a Docker image to
-the create operation. A docker path recognizable by alien is as follow: **[registry/][repository/]image[:tag].dockerimg**.
-While feeling like a workaround, the *.dockerimg* file extension is mandatory for now.
+Docker images are defined using a new artifact type combined with a repository definition.
+To specify which image a container use, you must defined the image as the implementation artifact of the container's **Create** operation, like this:
+```
+create:
+  implementation:
+    file: mongo:latest
+    repository: docker
+    type: tosca.artifacts.Deployment.Image.Container.Docker
+```
+
+### Adding External Storage as Docker Volumes
+
+You can add External Volumes to your containers by using the `alien.nodes.DockerExtVolume` type. You must however define a volume name (that must be unique in your provider) and a container mount point.
 
 ### Getting a property from a requirement target
 
