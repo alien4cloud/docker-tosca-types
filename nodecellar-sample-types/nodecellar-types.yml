@@ -33,9 +33,10 @@ node_types:
         default:
           LOG_LEVEL:
     requirements:
-      - mongo_db: alien.capabilities.endpoint.Mongo
-        type: tosca.relationships.ConnectsTo
-        occurrences: [1, 1]
+      - mongo_db:
+          capability: alien.capabilities.endpoint.Mongo
+          relationship: tosca.relationships.ConnectsTo
+          occurrences: [1, 1]
     capabilities:
       nodecellar_app:
         type: alien.capabilities.endpoint.docker.Nodecellar

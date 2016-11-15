@@ -67,9 +67,10 @@ node_types:
     capabilities:
       attach: alien.capabilities.DockerVolumeAttachment
     requirements:
-      - host: tosca.capabilities.Container.Docker
-        relationship: tosca.relationships.HostedOn
-        occurrences: [0, 1]
+      - host:
+          capability: tosca.capabilities.Container.Docker
+          relationship: tosca.relationships.HostedOn
+          occurrences: [0, 1]
   alien.nodes.DockerExtVolume:
     derived_from: tosca.nodes.BlockStorage
     tags:
@@ -85,7 +86,8 @@ node_types:
         default: ""
     requirements:
       attachment:
-        type: alien.capabilities.DockerVolumeAttachment
+        capability: alien.capabilities.DockerVolumeAttachment
+        relationship: alien.relationships.MountDockerVolume
 
 data_types:
   alien.datatypes.EmptyMap:
