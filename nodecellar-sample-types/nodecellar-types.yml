@@ -13,7 +13,7 @@ imports:
 repositories:
   docker:
     url: https://hub.docker.com/
-    type: docker
+    type: http
 
 node_types:
   alien.nodes.Application.Docker.Nodecellar:
