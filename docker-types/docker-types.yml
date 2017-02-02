@@ -2,7 +2,7 @@ tosca_definitions_version: alien_dsl_1_3_0
 
 template_name: docker-types
 template_author: Fastconnect
-template_version: 1.1.0
+template_version: 1.2.0-SNAPSHOT
 
 imports:
   - tosca-normative-types:1.0.0-ALIEN12
@@ -66,6 +66,7 @@ node_types:
           Reflects the external endpoint assigned to this container.
     capabilities:
       attach: alien.capabilities.DockerVolumeAttachment
+      scalable: tosca.capabilities.Scalable
     requirements:
       - host:
           capability: tosca.capabilities.Container.Docker
