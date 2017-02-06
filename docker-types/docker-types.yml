@@ -31,9 +31,11 @@ node_types:
         required: true
         default: 1.0
       mem_share:
-        type: integer
+        type: scalar-unit.size
         required: true
-        default: 128
+        default: 128 MB
+        constraints:
+          - greater_or_equal: 0 MB
       disk_share:
         type: integer
         required: false

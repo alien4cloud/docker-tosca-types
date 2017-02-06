@@ -7,14 +7,14 @@ template_author: Fastconnect
 imports:
   - nodecellar-docker-types:1.1.1-SNAPSHOT
   - tosca-normative-types:1.0.0-ALIEN12
-  - docker-types:1.1.0
+  - docker-types:1.2.0-SNAPSHOT
 
 topology_template:
   node_templates:
     Mongo:
       type: alien.nodes.Application.Docker.Mongo
       properties:
-        mem_share: 128
+        mem_share: 128 MB
         cpu_share: 1.0
       capabilities:
         mongo_db:
@@ -29,7 +29,7 @@ topology_template:
       type: alien.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: cd /nodecellar && nodejs server.js
-        mem_share: 128
+        mem_share: 128 MB
         docker_env_vars:
           LOG_LEVEL: INFO
         cpu_share: 1.0
