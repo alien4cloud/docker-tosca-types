@@ -1,44 +1,36 @@
 tosca_definitions_version: alien_dsl_1_3_0
 description: Alien4Cloud template of a docker Nodecellar + MongoDB on a VM.
-template_name: NodecellarDockerHybrid
-template_version: 1.0.0-SNAPSHOT
-template_author: Fastconnect
+metadata:
+    template_name: NodecellarDockerHybrid
+    template_version: 1.0.0-SNAPSHOT
+    template_author: Fastconnect
 
 imports:
   - tosca-normative-types:1.0.0-ALIEN12
   - docker-types:1.2.0-SNAPSHOT
+  - mongod-type:1.1.0-SNAPSHOT
   - nodecellar-docker-types:1.1.1-SNAPSHOT
-  - mongod-type:1.0.0-SNAPSHOT
-
-node_types:
 
 topology_template:
+
+  inputs:
+    mongo_port:
+      type: integer
+      required: true
+      default: 27017
+      constraints: 
+        - in_range: [8000, 65535]
+
   node_templates:
-    Mongod:
-      type: alien.nodes.Mongod
-      properties:
-        port: 27017
-      requirements:
-        - host:
-            node: Compute
-            capability: tosca.capabilities.Container
-            relationship: tosca.relationships.HostedOn
-      capabilities:
-        endpoint:
-          properties:
-            protocol: tcp
-            initiator: source
-            network_name: PRIVATE
-            secure: false
     Compute:
       type: tosca.nodes.Compute
       capabilities:
         endpoint:
           properties:
-            protocol: tcp
-            initiator: source
-            network_name: PRIVATE
             secure: true
+            protocol: tcp
+            network_name: PRIVATE
+            initiator: source
         os:
           properties:
             type: linux
@@ -51,25 +43,46 @@ topology_template:
       type: alien.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
-        mem_share: 128 MB
         docker_env_vars: 
           LOG_LEVEL: INFO
         cpu_share: "1.0"
+        mem_share: "128 MB"
       requirements:
         - mongo_db:
             node: Mongod
-            capability: tosca.capabilities.Endpoint.Database
+            capability: alien.capabilities.endpoint.Mongo
             relationship: tosca.relationships.ConnectsTo
       capabilities:
         nodecellar_app:
           properties:
-            protocol: tcp
-            port: 3000
-            initiator: source
-            network_name: PRIVATE
             docker_bridge_port_mapping: 0
+            port: 3000
+            protocol: tcp
             secure: false
-
+            network_name: PRIVATE
+            initiator: source
+        scalable:
+          properties:
+            min_instances: 1
+            max_instances: 1
+            default_instances: 1
+    Mongod:
+      type: alien.nodes.Mongod
+      properties:
+        port: { get_input: mongo_port }
+      requirements:
+        - host:
+            node: Compute
+            capability: tosca.capabilities.Container
+            relationship: tosca.relationships.HostedOn
+      capabilities:
+        endpoint:
+          properties:
+            port: { get_input: mongo_port }
+            protocol: tcp
+            secure: false
+            network_name: PRIVATE
+            initiator: source
   outputs:
     Nodecellar_endpoint:
       value: { get_attribute: [ Nodecellar, endpoint ] }
