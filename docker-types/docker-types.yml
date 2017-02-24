@@ -82,7 +82,7 @@ node_types:
       volume_name:
         type: string
         description: Name of the volume.  If it does not exist, it is created implicitly. Otherwise, the existing volume is reused.
-        required: false
+        required: true
       device:
         type: string
         required: false
@@ -91,10 +91,6 @@ node_types:
       attachment:
         capability: alien.capabilities.DockerVolumeAttachment
         relationship: alien.relationships.MountDockerVolume
-
-data_types:
-  alien.datatypes.EmptyMap:
-  alien.datatypes.EmptyList:
 
 capability_types:
   tosca.capabilities.Container.Docker:
