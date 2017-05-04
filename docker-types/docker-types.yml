@@ -1,7 +1,7 @@
 tosca_definitions_version: alien_dsl_1_4_0
 
 template_name: docker-types
-template_author: Fastconnect
+template_author: alien4cloud
 template_version: 1.4.0-SNAPSHOT
 
 imports:

@@ -2,7 +2,7 @@ tosca_definitions_version: alien_dsl_1_4_0
 description: Alien4Cloud template of a Nodecellar + MongoDB topology using Docker containers.
 template_name: NodecellarDocker
 template_version: 1.4.0-SNAPSHOT
-template_author: Fastconnect
+template_author: alien4cloud
 
 imports:
   - nodecellar-docker-types:1.4.0-SNAPSHOT
