@@ -1,36 +1,30 @@
-tosca_definitions_version: alien_dsl_1_3_0
-description: Alien4Cloud template of a docker Nodecellar + MongoDB on a VM.
+tosca_definitions_version: alien_dsl_1_4_0
+
 metadata:
-    template_name: NodecellarDockerHybrid
-    template_version: 1.1.0-SNAPSHOT
-    template_author: Fastconnect
+  template_name: NodecellarDockerHybrid
+  template_version: 1.4.0-SNAPSHOT
+  template_author: Fastconnect
+
+description: "Alien4Cloud template of a docker Nodecellar + MongoDB on a VM."
 
 imports:
-  - tosca-normative-types:1.0.0-ALIEN14
-  - docker-types:1.3.0-SNAPSHOT
+  - nodecellar-docker-types:1.4.0-SNAPSHOT
+  - docker-types:1.4.0-SNAPSHOT
   - org.alien4cloud.nodes.HostedMongo:1.4.0-SNAPSHOT
-  - nodecellar-docker-types:1.2.0-SNAPSHOT
+  - tosca-normative-types:1.0.0-ALIEN14
 
 topology_template:
-
   inputs:
     mongo_port:
       type: integer
       required: true
       default: 27017
-      constraints: 
+      constraints:
         - in_range: [8000, 65535]
-
   node_templates:
     Compute:
       type: tosca.nodes.Compute
       capabilities:
-        endpoint:
-          properties:
-            secure: true
-            protocol: tcp
-            network_name: PRIVATE
-            initiator: source
         os:
           properties:
             type: linux
@@ -39,6 +33,12 @@ topology_template:
             min_instances: 1
             max_instances: 1
             default_instances: 1
+        endpoint:
+          properties:
+            secure: true
+            protocol: tcp
+            network_name: PRIVATE
+            initiator: source
     Nodecellar:
       type: alien.nodes.Application.Docker.Nodecellar
       properties:
@@ -50,7 +50,7 @@ topology_template:
       requirements:
         - mongo_db:
             node: Mongod
-            capability: alien.capabilities.endpoint.Mongo
+            capability: org.alien4cloud.capabilities.endpoint.Mongo
             relationship: tosca.relationships.ConnectsTo
       capabilities:
         nodecellar_app:
