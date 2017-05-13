@@ -1,0 +1,80 @@
+tosca_definitions_version: alien_dsl_1_4_0
+template_name: petclinic-docker-type
+template_author: alien4cloud
+template_version: 1.4.0-SNAPSHOT
+
+description: >
+  TOSCA simple profile with Nodecellar using Docker containers
+
+imports:
+  - tosca-normative-types:1.0.0-ALIEN14
+  - docker-types:1.4.0-SNAPSHOT
+
+repositories:
+  docker:
+    url: https://hub.docker.com/
+    type: http
+
+node_types:
+  alien.nodes.Application.Docker.Petclinic:
+    derived_from: tosca.nodes.Container.Application.DockerContainer
+    properties:
+      mem_share:
+        type: scalar-unit.size
+        required: true
+        default: 768 MB
+        constraints:
+          - greater_or_equal: 768 MB
+      nexus_base_url:
+        type: string
+        default: https://fastconnect.org/maven/content/repositories/opensource-snapshot/
+      nexus_group:
+        type: string
+        default: org.springframework.samples
+      nexus_artifact:
+        type: string
+        default: spring-petclinic
+      nexus_version:
+        type: string
+        default: 4.2.6-SNAPSHOT
+    capabilities:
+      petclinic_app:
+        type: alien.capabilities.endpoint.docker.Petclinic
+    attributes:
+      petclinic_url: { concat:  ["http://", get_attribute: [SELF, public_ip_address], ":", get_property: [SELF, port]] }
+    interfaces:
+      Standard:
+        create:
+          inputs:
+            ENV_NEXUS_BASE: { get_property: [SELF, nexus_base_url] }
+            ENV_NEXUS_GROUP: { get_property: [SELF, nexus_group] }
+            ENV_NEXUS_ARTIFACT: { get_property: [SELF, nexus_artifact] }
+            ENV_NEXUS_VERSION: { get_property: [SELF, nexus_version] }
+
+            ENV_DB_IP: { get_property: [REQ_TARGET, database, ip_address] }
+            ENV_DB_PORT: { get_property: [REQ_TARGET, database, port] }
+            ENV_DB_NAME: 'my_database' # { get_property: [SELF, db_name] }
+            ENV_DB_USER: 'foo' # { get_property: [SELF, db_user] }
+            ENV_DB_PASS: 'bar' # { get_property: [SELF, db_pass] }
+
+          implementation:
+            file: stuntv/tomcat-petclinic:1.3-SNAPSHOT
+            repository: docker
+            type: tosca.artifacts.Deployment.Image.Container.Docker
+    requirements:
+      - database:
+          capability: tosca.capabilities.Endpoint.Database
+          relationship: tosca.relationships.ConnectsTo
+          occurrences: [1, 1]
+
+capability_types:
+  alien.capabilities.endpoint.docker.Petclinic:
+    derived_from: alien.capabilities.endpoint.Docker
+    properties:
+      docker_bridge_port_mapping:
+        type: integer
+        description: Port used to bridge to the container's endpoint.
+        default: 0
+      port:
+        type: integer
+        default: 8080
