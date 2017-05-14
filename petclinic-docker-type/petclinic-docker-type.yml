@@ -41,7 +41,7 @@ node_types:
       petclinic_app:
         type: alien.capabilities.endpoint.docker.Petclinic
     attributes:
-      petclinic_url: { concat:  ["http://", get_attribute: [SELF, public_ip_address], ":", get_property: [SELF, port]] }
+      petclinic_url: { concat:  [get_attribute: [SELF, endpoint], "/petclinic"] }
     interfaces:
       Standard:
         create:
@@ -65,7 +65,7 @@ node_types:
       - database:
           capability: tosca.capabilities.Endpoint.Database
           relationship: tosca.relationships.ConnectsTo
-          occurrences: [1, 1]
+          occurrences: [0, 1]
 
 capability_types:
   alien.capabilities.endpoint.docker.Petclinic:
