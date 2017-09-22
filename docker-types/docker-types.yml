@@ -17,6 +17,14 @@ artifact_types:
     derived_from: tosca.artifacts.Deployment.Image
 
 node_types:
+  org.alien4cloud.extended.container.types.ContainerDeploymentUnit:
+    abstract: true
+    derived_from: tosca.nodes.Root
+    description: >
+      Can host containers and be deployed as a unit. Think about Pods in K8S.
+    capabilities:
+      host: tosca.capabilities.Container.Docker
+
   tosca.nodes.Container.Application.DockerContainer:
     abstract: true
     derived_from: tosca.nodes.Container.Application
@@ -88,9 +96,13 @@ node_types:
         required: false
         default: ""
     requirements:
-      attachment:
-        capability: alien.capabilities.DockerVolumeAttachment
-        relationship: alien.relationships.MountDockerVolume
+      - attachment:
+          capability: alien.capabilities.DockerVolumeAttachment
+          relationship: alien.relationships.MountDockerVolume
+      - host:
+          capability: tosca.capabilities.Container.Docker
+          relationship: tosca.relationships.HostedOn
+          occurrences: [0, 1]
 
 capability_types:
   tosca.capabilities.Container.Docker:
