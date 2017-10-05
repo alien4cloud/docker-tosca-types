@@ -11,12 +11,15 @@ description: >
   Contains the non-normative definition of Docker-related types as
   currently supported in Alien 4 Cloud.
 
+
 artifact_types:
   tosca.artifacts.Deployment.Image.Container.Docker:
     description: Docker Container Image
     derived_from: tosca.artifacts.Deployment.Image
 
+
 node_types:
+
   org.alien4cloud.extended.container.types.ContainerDeploymentUnit:
     abstract: true
     derived_from: tosca.nodes.Root
@@ -82,6 +85,7 @@ node_types:
           capability: tosca.capabilities.Container.Docker
           relationship: tosca.relationships.HostedOn
           occurrences: [0, 1]
+
   alien.nodes.DockerExtVolume:
     derived_from: tosca.nodes.BlockStorage
     tags:
@@ -99,16 +103,20 @@ node_types:
       - attachment:
           capability: alien.capabilities.DockerVolumeAttachment
           relationship: alien.relationships.MountDockerVolume
+          occurrences: [1, unbounded]
       - host:
           capability: tosca.capabilities.Container.Docker
           relationship: tosca.relationships.HostedOn
           occurrences: [0, 1]
 
+
 capability_types:
+
   tosca.capabilities.Container.Docker:
     derived_from: tosca.capabilities.Container
     description: >
       The capacity to host and run Docker containers.
+
   alien.capabilities.endpoint.Docker:
     derived_from: tosca.capabilities.Endpoint
     description: >
@@ -119,13 +127,16 @@ capability_types:
         type: integer
         description: Port used to bridge to the container's endpoint.
         default: 0
+
   alien.capabilities.DockerVolumeAttachment:
     derived_from: tosca.capabilities.Attachment
     description: >
       Capability to mount a Docker volume
     valid_source_types: [ alien.nodes.DockerExtVolume ]
 
+
 relationship_types:
+
   alien.relationships.MountDockerVolume:
     derived_from: tosca.relationships.AttachTo
     valid_target_types: [ alien.capabilities.DockerVolumeAttachment ]
