@@ -1,25 +1,23 @@
-tosca_definitions_version: alien_dsl_1_4_0
+tosca_definitions_version: alien_dsl_2_0_0
 
-template_name: docker-types
-template_author: alien4cloud
-template_version: 1.4.0-SNAPSHOT
+metadata:
+  template_name: docker-types
+  template_author: alien4cloud
+  template_version: 1.4.0-SNAPSHOT
 
 imports:
-  - tosca-normative-types:1.0.0-ALIEN14
+  - tosca-normative-types:1.0.0-SNAPSHOT
 
 description: >
   Contains the non-normative definition of Docker-related types as
   currently supported in Alien 4 Cloud.
-
 
 artifact_types:
   tosca.artifacts.Deployment.Image.Container.Docker:
     description: Docker Container Image
     derived_from: tosca.artifacts.Deployment.Image
 
-
 node_types:
-
   org.alien4cloud.extended.container.types.ContainerDeploymentUnit:
     abstract: true
     derived_from: tosca.nodes.Root
@@ -27,6 +25,7 @@ node_types:
       Can host containers and be deployed as a unit. Think about Pods in K8S.
     capabilities:
       host: tosca.capabilities.Container.Docker
+      scalable: tosca.capabilities.Scalable
 
   tosca.nodes.Container.Application.DockerContainer:
     abstract: true

@@ -6,7 +6,7 @@ template_author: alien4cloud
 
 imports:
   - nodecellar-docker-types:1.4.0-SNAPSHOT
-  - tosca-normative-types:1.0.0-ALIEN14
+  - tosca-normative-types:1.0.0-SNAPSHOT
   - docker-types:1.4.0-SNAPSHOT
 
 topology_template:

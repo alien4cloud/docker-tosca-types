@@ -11,7 +11,7 @@ imports:
   - nodecellar-docker-types:1.4.0-SNAPSHOT
   - docker-types:1.4.0-SNAPSHOT
   - org.alien4cloud.nodes.HostedMongo:1.4.0-SNAPSHOT
-  - tosca-normative-types:1.0.0-ALIEN14
+  - tosca-normative-types:1.0.0-SNAPSHOT
 
 topology_template:
   inputs:
@@ -43,7 +43,7 @@ topology_template:
       type: alien.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
-        docker_env_vars: 
+        docker_env_vars:
           LOG_LEVEL: INFO
         cpu_share: "1.0"
         mem_share: "128 MB"
