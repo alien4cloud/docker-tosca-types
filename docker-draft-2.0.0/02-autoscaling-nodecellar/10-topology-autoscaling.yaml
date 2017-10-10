@@ -6,7 +6,7 @@ metadata:
   template_author: alien4cloud
 
 description: >
-  A nodecellar hosted on a container unit with autoscalling policy & a mongo
+  A nodecellar hosted on a container unit with autoscalling policy and a mongo as a single container
 
 imports:
   - docker-types:1.4.0-SNAPSHOT
@@ -15,6 +15,9 @@ imports:
   - docker-draft.sandbox.samples:2.0.0-SNAPSHOT
 
 topology_template:
+
+  description: >
+    A nodecellar hosted on a container unit with autoscalling policy and a mongo as a single container
 
   node_templates:
 
@@ -76,7 +79,7 @@ topology_template:
   policies:
     - auto_scaling_policy:
         type: tosca.policies.Scaling
-        description: The anti affinity policy between node 1 and 2
+        description: a sample autoscaling policy for the nodecellar DU
         # metadata:
         #   a_meta: a meta value
         #   another_meta: another meta value
