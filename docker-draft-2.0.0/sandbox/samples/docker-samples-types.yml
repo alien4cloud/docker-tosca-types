@@ -15,7 +15,7 @@ repositories:
     type: http
 
 data_types:
-  alien.datatypes.docker.cli-args.Nodecellar:
+  org.alien4cloud.datatypes.docker.cli-args.Nodecellar:
     derived_from: tosca.datatypes.Root
     properties:
       dns:
@@ -26,14 +26,14 @@ data_types:
         required: false
 
 node_types:
-  alien.nodes.Application.Docker.Nodecellar:
+  org.alien4cloud.nodes.Application.Docker.Nodecellar:
     derived_from: tosca.nodes.Container.Application.DockerContainer
     properties:
       docker_run_cmd:
         type: string
         default: "cd /nodecellar && nodejs server.js"
       docker_options:
-        type: alien.datatypes.docker.cli-args.Nodecellar
+        type: org.alien4cloud.datatypes.docker.cli-args.Nodecellar
         required: false
       docker_env_vars:
         type: map
@@ -49,12 +49,12 @@ node_types:
           occurrences: [1, 1]
     capabilities:
       nodecellar_app:
-        type: alien.capabilities.endpoint.docker.Nodecellar
+        type: org.alien4cloud.capabilities.endpoint.docker.Nodecellar
     interfaces:
       Standard:
         create:
           inputs:
-            ENV_MONGO_HOST: { get_property: [TARGET, mongo_db, ip_address] }
+            ENV_MONGO_HOST: { get_attribute: [TARGET, mongo_db, ip_address] }
             ENV_MONGO_PORT: { get_property: [TARGET, mongo_db, port] }
             ENV_NODECELLAR_PORT: 3000
           implementation:
@@ -63,11 +63,11 @@ node_types:
             type: tosca.artifacts.Deployment.Image.Container.Docker
 
 
-  alien.nodes.Application.Docker.Mongo:
+  org.alien4cloud.nodes.Application.Docker.Mongo:
     derived_from: tosca.nodes.Container.Application.DockerContainer
     capabilities:
       mongo_db:
-        type: alien.capabilities.endpoint.docker.Mongo
+        type: org.alien4cloud.capabilities.endpoint.docker.Mongo
     interfaces:
       Standard:
         create:
@@ -78,7 +78,7 @@ node_types:
 
 capability_types:
 
-  alien.capabilities.endpoint.docker.Mongo:
+  org.alien4cloud.capabilities.endpoint.docker.Mongo:
     derived_from: tosca.capabilities.Endpoint.Database
     description: >
       Capability to connect to a Docker-supported Mongo database through bridge networking.
@@ -91,8 +91,8 @@ capability_types:
         type: integer
         default: 27017
 
-  alien.capabilities.endpoint.docker.Nodecellar:
-    derived_from: alien.capabilities.endpoint.Docker
+  org.alien4cloud.capabilities.endpoint.docker.Nodecellar:
+    derived_from: org.alien4cloud.capabilities.endpoint.Docker
     properties:
       docker_bridge_port_mapping:
         type: integer

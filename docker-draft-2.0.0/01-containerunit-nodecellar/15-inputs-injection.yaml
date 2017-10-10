@@ -7,11 +7,7 @@ metadata:
 
 
 description: |
-  A nodecellar topology template composing of: 
-    - 1 ContainerUnit
-    - 2 Nodecellar nodes hosted_on the ContainerUnit
-    - 2 MongoDBs having a relationship with each Nodecellar nodes.
-    - The 2 mongos are members of an anti-affinity policy.
+  The topology after inputs injection
 
 imports:
   - docker-types:1.4.0-SNAPSHOT
@@ -25,14 +21,6 @@ repositories:
 
 topology_template:
 
-  inputs:
-
-    cpu_share:
-        type: float
-        required: true
-        default: 1.0
-
-
   node_templates:
 
     ContainerDeploymentUnit:
@@ -44,7 +32,7 @@ topology_template:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
         docker_env_vars: 
           LOG_LEVEL: "DEBUG"
-        cpu_share: { get_input: cpu_share }
+        cpu_share: 1.0
         mem_share: "1024 MB"
       requirements:
         - host:
@@ -76,7 +64,7 @@ topology_template:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
         docker_env_vars: 
           LOG_LEVEL: "DEBUG"
-        cpu_share: { get_input: cpu_share }
+        cpu_share: 1.0
         mem_share: "1024 MB"
       requirements:
         - host:
@@ -105,7 +93,7 @@ topology_template:
     Mongo:
       type: alien.nodes.Application.Docker.Mongo
       properties:
-        cpu_share: { get_input: cpu_share }
+        cpu_share: 1.0
         mem_share: "512 MB"
       capabilities:
         mongo_db:
@@ -125,7 +113,7 @@ topology_template:
     Mongo_2:
       type: alien.nodes.Application.Docker.Mongo
       properties:
-        cpu_share: { get_input: cpu_share }
+        cpu_share: 1.0
         mem_share: "512 MB"
       capabilities:
         mongo_db:

@@ -5,11 +5,11 @@ template_author: alien4cloud
 template_version: 1.4.0-SNAPSHOT
 
 imports:
-  - tosca-normative-types:1.0.0-ALIEN14
-  - docker-types:1.4.0-SNAPSHOT
+  - tosca-normative-types:1.0.0-SNAPSHOT
+  - docker-types:2.0.0-SNAPSHOT
 
-description: >
-  Contains the result of the derivative topology for Kubernetes.
+description: |
+  Contains Kubernetes types used by modifiers and plain kubernetes objects
 
 data_types:
 
