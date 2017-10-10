@@ -1,186 +1,30 @@
-tosca_definitions_version: alien_dsl_1_4_0
+tosca_definitions_version: alien_dsl_2_0_0
 
 metadata:
-  template_name: docker-topo-sample-nodecellar
+  template_name: docker-draft.02-autoscaling-nodecellar
   template_version: 2.0.0-SNAPSHOT
   template_author: alien4cloud
 
-
-# node_types:
-#   tosca.example.nodes.MyContainer:
-#     derived_from: tosca.nodes.container.Docker
-#     requirements:
-#       - service_api: tosca.example.capabilities.MyServiceAPI
-#     interfaces:
-#       Standard:
-#         # Note that this actually is a create and start in a single op
-#         create:
-#           implementation: dockerImage
-#           inputs:
-#             env:
-#               - API_IP: get_property: [TARGET, service_api, ip_address]
-#             run_command: concat: [ "startsrv.sh ", get_property: [TARGET, service_api, ip_address], "-debug", "–great" ]
-
-
 description: >
-  Sample nodecellar topo 
+  A nodecellar hosted on a container unit with autoscalling policy & a mongo
 
 imports:
   - docker-types:1.4.0-SNAPSHOT
-  - tosca-normative-types:1.0.0-ALIEN14
-
-repositories:
-  docker:
-    url: https://hub.docker.com/
-    type: http
-
-
-node_types:
-  alien.nodes.Application.Docker.Nodecellar:
-    derived_from: tosca.nodes.Container.Application.DockerContainer
-    properties:
-      docker_run_cmd:
-        type: string
-        default: "cd /nodecellar && nodejs server.js"
-      docker_options:
-        type: alien.datatypes.docker.cli-args.Nodecellar
-        required: false
-      docker_env_vars:
-        type: map
-        description: Environment variables for the Docker container.
-        entry_schema:
-          type: string
-        default:
-          LOG_LEVEL:
-    requirements:
-      - mongo_db:
-          capability: tosca.capabilities.Endpoint.Database
-          relationship: tosca.relationships.ConnectsTo
-          occurrences: [1, 1]
-    capabilities:
-      nodecellar_app:
-        type: alien.capabilities.endpoint.docker.Nodecellar
-    interfaces:
-      Standard:
-        create:
-          inputs:
-            ENV_MONGO_HOST: { get_property: [TARGET, mongo_db, ip_address] }
-            ENV_MONGO_PORT: { get_property: [TARGET, mongo_db, port] }
-            ENV_NODECELLAR_PORT: 3000
-          implementation:
-            file: afraisse/nodecellar:exp
-            repository: docker
-            type: tosca.artifacts.Deployment.Image.Container.Docker
-
-
-  alien.nodes.Application.Docker.Mongo:
-    derived_from: tosca.nodes.Container.Application.DockerContainer
-    capabilities:
-      mongo_db:
-        type: alien.capabilities.endpoint.docker.Mongo
-    interfaces:
-      Standard:
-        create:
-          implementation:
-            file: mongo:latest
-            repository: docker
-            type: tosca.artifacts.Deployment.Image.Container.Docker
-
-data_types:
-  alien.datatypes.docker.cli-args.Nodecellar:
-    derived_from: tosca.datatypes.Root
-    properties:
-      dns:
-        type: string
-        required:  false
-      lxc-conf:
-        type: string
-        required: false
-
-capability_types:
-
-  alien.capabilities.endpoint.docker.Mongo:
-    derived_from: tosca.capabilities.Endpoint.Database
-    description: >
-      Capability to connect to a Docker-supported Mongo database through bridge networking.
-    properties:
-      docker_bridge_port_mapping:
-        type: integer
-        description: Port used to bridge to the container's endpoint.
-        default: 0
-      port:
-        type: integer
-        default: 27017
-
-  alien.capabilities.endpoint.docker.Nodecellar:
-    derived_from: alien.capabilities.endpoint.Docker
-    properties:
-      docker_bridge_port_mapping:
-        type: integer
-        description: Port used to bridge to the container's endpoint.
-        default: 0
-      port:
-        type: integer
-        default: 3000
-
-
-
+  # https://github.com/alien4cloud/tosca-normative-types/blob/tests/2.0.0/normative-types.yml
+  - tosca-normative-types:1.0.0-SNAPSHOT
+  - docker-draft.sandbox.samples:2.0.0-SNAPSHOT
 
 topology_template:
 
-  inputs:
-
-    size:
-      type: scalar-unit.size
-      required: true
-      constraints:
-        - greater_or_equal: 1 MB
-      description: "The requested storage size (default unit is MB). Note: - Required when an existing volume (i.e., volume_id) is not available. - If volume_id is provided, size is ignored.  Resize of existing volumes is not considered at this time."
-
-    volume_name:
-      type: string
-      required: true
-      description: "Name of the volume.  If it does not exist, it is created implicitly. Otherwise, the existing volume is reused."
-
-    cpu_share:
-        type: float
-        required: true
-        default: 1.0
-
-
   node_templates:
-
-    DockerExtVolume:
-      type: alien.nodes.DockerExtVolume
-      properties:
-        volume_name: { get_input: volume_name }
-        size: { get_input: size }
-      requirements:
-        - host:
-            node: ContainerDeploymentUnit
-            capability: tosca.capabilities.Container.Docker
-            relationship: tosca.relationships.HostedOn
-        - attachment:
-            node: Nodecellar
-            capability: alien.capabilities.DockerVolumeAttachment
-            relationship: alien.relationships.MountDockerVolume
-            properties:
-              container_path: { get_input: volume_name }
-        - attachment:
-            node: Mongo
-            capability: alien.capabilities.DockerVolumeAttachment
-            relationship: alien.relationships.MountDockerVolume
-            properties:
-              container_path: { get_input: volume_name }
-
 
     Nodecellar:
       type: alien.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
-        docker_env_vars: 
+        docker_env_vars:
           LOG_LEVEL: "DEBUG"
-        cpu_share: { get_input: cpu_share }
+        cpu_share: 1.0
         mem_share: "1024 MB"
       requirements:
         - host:
@@ -191,45 +35,51 @@ topology_template:
             node: Mongo
             capability: alien.capabilities.endpoint.docker.Mongo
             relationship: tosca.relationships.ConnectsTo
-      capabilities:
-        nodecellar_app:
-          properties:
-            docker_bridge_port_mapping: 0
-            port: 3000
-            protocol: tcp
-            secure: false
-            network_name: PRIVATE
-            initiator: source
-        scalable:
-          properties:
-            min_instances: 1
-            max_instances: 1
-            default_instances: 1
+      # capabilities:
+      #   nodecellar_app:
+      #     properties:
+      #       docker_bridge_port_mapping: 0
+      #       port: 3000
+      #       protocol: tcp
+      #       secure: false
+      #       network_name: PRIVATE
+      #       initiator: source
 
     Mongo:
       type: alien.nodes.Application.Docker.Mongo
       properties:
-        cpu_share: { get_input: cpu_share }
+        cpu_share: 1.0
         mem_share: "512 MB"
-      requirements:
-        - host:
-            node: ContainerDeploymentUnit
-            capability: tosca.capabilities.Container.Docker
-            relationship: tosca.relationships.HostedOn
-      capabilities:
-        mongo_db:
-          properties:
-            docker_bridge_port_mapping: 0
-            port: 27017
-            protocol: tcp
-            secure: false
-            network_name: PRIVATE
-            initiator: source
-        scalable:
-          properties:
-            min_instances: 1
-            max_instances: 1
-            default_instances: 1
+      # requirements:
+      #   - host:
+      #       node: ContainerDeploymentUnit
+      #       capability: tosca.capabilities.Container.Docker
+      #       relationship: tosca.relationships.HostedOn
+      # capabilities:
+      #   mongo_db:
+      #     properties:
+      #       docker_bridge_port_mapping: 0
+      #       port: 27017
+      #       protocol: tcp
+      #       secure: false
+      #       network_name: PRIVATE
+      #       initiator: source
+      #   scalable:
+      #     properties:
+      #       min_instances: 1
+      #       max_instances: 1
+      #       default_instances: 1
 
     ContainerDeploymentUnit:
       type: org.alien4cloud.extended.container.types.ContainerDeploymentUnit
+
+  policies:
+    - auto_scaling_policy:
+        type: tosca.policies.Scaling
+        description: The anti affinity policy between node 1 and 2
+        # metadata:
+        #   a_meta: a meta value
+        #   another_meta: another meta value
+        # properties:
+        #   sample_property: sample prop value
+        targets: [ContainerDeploymentUnit]
