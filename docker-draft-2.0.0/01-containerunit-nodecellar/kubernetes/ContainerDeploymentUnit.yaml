@@ -1,0 +1,40 @@
+apiVersion: extension/v1beta # for versions before 1.7.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: ContainerDeploymentUnit
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: Nodecellar # Should generate a uniq name
+        env:
+          LOG_LEVEL: "DEBUG"
+          MONGO_HOST: { get_attribute: [TARGET, mongo_db, ip_address] }
+          MONGO_PORT: { get_property: [TARGET, mongo_db, port] }
+          NODECELLAR_PORT: 3000
+        image: afraisse/nodecellar:exp
+        resources:
+          requests:
+            memory: 1024M
+            cpu: 1.0
+          limits:
+            memory: 1024M
+            cpu: 1.0
+        command: ["/bin/bash", "-c", "cd /nodecellar && nodejs server.js" ]
+
+      - name: Nodecellar_2
+        env:
+          LOG_LEVEL: "DEBUG"
+          MONGO_HOST: { get_attribute: [TARGET, mongo_db, ip_address] }
+          MONGO_PORT: { get_property: [TARGET, mongo_db, port] }
+          NODECELLAR_PORT: 3000
+        image: afraisse/nodecellar:exp
+        resources:
+          requests:
+            memory: 1024M
+            cpu: 1.0
+          limits:
+            memory: 1024M
+            cpu: 1.0
+        command: ["/bin/bash", "-c", "cd /nodecellar && nodejs server.js" ]

@@ -10,7 +10,7 @@ description: |
   The topology after inputs injection
 
 imports:
-  - docker-types:1.4.0-SNAPSHOT
+  - docker-types:2.0.0-SNAPSHOT
   - tosca-normative-types:1.0.0-SNAPSHOT
 
 repositories:

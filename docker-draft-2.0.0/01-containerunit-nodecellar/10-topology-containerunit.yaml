@@ -14,7 +14,7 @@ description: |
     - The 2 mongos are members of an anti-affinity policy.
 
 imports:
-  - docker-types:1.4.0-SNAPSHOT
+  - docker-types:2.0.0-SNAPSHOT
   - tosca-normative-types:1.0.0-SNAPSHOT
 
 repositories:

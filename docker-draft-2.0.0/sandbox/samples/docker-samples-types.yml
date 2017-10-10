@@ -55,7 +55,7 @@ node_types:
         create:
           inputs:
             ENV_MONGO_HOST: { get_attribute: [TARGET, mongo_db, ip_address] }
-            ENV_MONGO_PORT: { get_property: [TARGET, mongo_db, port] }
+            ENV_MONGO_PORT: { get_attribute: [TARGET, mongo_db, port] } # use get_attribute to get the port mapping value ?
             ENV_NODECELLAR_PORT: 3000
           implementation:
             file: afraisse/nodecellar:exp

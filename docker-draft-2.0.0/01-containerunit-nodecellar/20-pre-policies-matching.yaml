@@ -11,8 +11,9 @@ description: |
 
 
 imports:
-  - docker-types:1.4.0-SNAPSHOT
+  - docker-types:2.0.0-SNAPSHOT
   - tosca-normative-types:1.0.0-SNAPSHOT
+  - kubernetes-modifier-types:2.0.0-SNAPSHOT
 
 
 repositories:
@@ -28,6 +29,8 @@ topology_template:
     ContainerDeploymentUnit:
       type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployments
       properties:
+        metadata:
+          name: ContainerDeploymentUnit # Should generate a uniq name
         deployment:
           spec:
             replicas: 1 # HOWTO: only the default nb instances is used and set here ?
@@ -47,7 +50,7 @@ topology_template:
             relationship: tosca.relationships.ConnectsTo
       capabilities:
         # HOWTO: Should we change capabilities ?
-        nodecellar_app:
+        docker_endpoint: # replace nodecellar_app
           properties:
             port: 3000
             protocol: tcp
@@ -56,11 +59,12 @@ topology_template:
             initiator: source
       properties:
         container:
+          name: Nodecellar
           env:
             # Merge env variables coming from properties and implementation interfaces
             LOG_LEVEL: "DEBUG"
-            MONGO_HOST: { get_property: [TARGET, mongo_db, ip_address] }
-            MONGO_PORT: { get_property: [TARGET, mongo_db, port] }
+            MONGO_HOST: { get_attribute: [TARGET, mongo_db, ip_address] }
+            MONGO_PORT: { get_attribute: [TARGET, mongo_db, port] }
             NODECELLAR_PORT: 3000
           # HOWTO: handle repositories ?
           image: afraisse/nodecellar:exp
@@ -87,7 +91,7 @@ topology_template:
             capability: tosca.capabilities.Endpoint
             relationship: tosca.relationships.ConnectsTo
       capabilities:
-        nodecellar_app:
+        docker_endpoint:
           properties:
             port: 3000
             protocol: tcp
@@ -96,11 +100,12 @@ topology_template:
             initiator: source
       properties:
         container:
+          name: Nodecellar_2
           env:
             # Merge env variables coming from properties and implementation interfaces
             LOG_LEVEL: "DEBUG"
-            MONGO_HOST: { get_property: [TARGET, mongo_db, ip_address] }
-            MONGO_PORT: { get_property: [TARGET, mongo_db, port] }
+            MONGO_HOST: { get_attribute: [TARGET, mongo_db, ip_address] }
+            MONGO_PORT: { get_attribute: [TARGET, mongo_db, port] }
             NODECELLAR_PORT: 3000
           # HOWTO: handle repositories ?
           image: afraisse/nodecellar:exp
@@ -130,16 +135,16 @@ topology_template:
             capability: tosca.capabilities.Container.Docker
             relationship: tosca.relationships.HostedOn
       capabilities:
-        mongo_db:
+        docker_endpoint:
           properties:
             port: 27017
             protocol: tcp
             secure: false
             network_name: PRIVATE
             initiator: source
-      type: alien.nodes.Application.Docker.Mongo
       properties:
         container:
+          name: Mongo
           image: mongo:latest
           resources:
             requests:
@@ -166,7 +171,7 @@ topology_template:
             capability: tosca.capabilities.Container.Docker
             relationship: tosca.relationships.HostedOn
       capabilities:
-        mongo_db:
+        docker_endpoint:
           properties:
             port: 27017
             protocol: tcp
@@ -175,6 +180,7 @@ topology_template:
             initiator: source
       properties:
         container:
+          name: Mongo_2
           image: mongo:latest
           resources:
             requests:
