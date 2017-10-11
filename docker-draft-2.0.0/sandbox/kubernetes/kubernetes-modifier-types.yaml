@@ -11,6 +11,7 @@ description: |
 
 imports:
   - tosca-normative-types:1.0.0-SNAPSHOT
+  - docker-types:2.0.0-SNAPSHOT
 
 data_types:
 
@@ -523,9 +524,71 @@ node_types:
           Standard object metadata.
 
 
+  org.alien4cloud.extended.container.types.kubernetes.volume.Base:
+    abstract: true
+    derived_from: tosca.nodes.Root
+    description: |
+      https://v1-6.docs.kubernetes.io/docs/api-reference/v1.6/#volume-v1-core
+    requirements:
+      - attachment:
+          capability: alien.capabilities.DockerVolumeAttachment
+          relationship: alien.relationships.MountDockerVolume
+          occurrences: [1, unbounded]
+      - host:
+          capability: tosca.capabilities.Container
+          relationship: tosca.relationships.HostedOn
+          occurrences: [0, 1]
+    properties:
+      name:
+        type: string
+
+  org.alien4cloud.extended.container.types.kubernetes.volume.PersistentVolumeClaimVolumeSource:
+    abstract: true
+    derived_from: org.alien4cloud.extended.container.types.kubernetes.volume.Base
+    properties:
+      claimName:
+        type: string
+        description: |
+          ClaimName is the name of a PersistentVolumeClaim in the same namespace as the pod using this volume. More info: http://kubernetes.io/docs/user-guide/persistent-volumes#persistentvolumeclaims
+      readOnly:
+        type: boolean
+        description: |
+          Will force the ReadOnly setting in VolumeMounts. Default false.
+        default: false
+
+  org.alien4cloud.extended.container.types.kubernetes.volume.HostPathVolumeSource:
+    abstract: true
+    derived_from: org.alien4cloud.extended.container.types.kubernetes.volume.Base
+    properties:
+      path:
+        type: string
+        description: |
+          Path of the directory on the host. More info: http://kubernetes.io/docs/user-guide/volumes#hostpath
+
+org.alien4cloud.extended.container.types.kubernetes.volume.AWSElasticBlockStoreVolumeSource:
+    abstract: true
+    derived_from: org.alien4cloud.extended.container.types.kubernetes.volume.Base
+    properties:
+      fsType:
+        type: string
+        description: |
+          Filesystem type of the volume that you want to mount. Tip: Ensure that the filesystem type is supported by the host operating system. Examples: "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified. More info: http://kubernetes.io/docs/user-guide/volumes#awselasticblockstore
+      partition:
+        type: integer
+        description: |
+          The partition in the volume that you want to mount. If omitted, the default is to mount by volume name. Examples: For volume /dev/sda1, you specify the partition as "1". Similarly, the volume partition for /dev/sda is "0" (or you can leave the property empty).
+      readOnly:
+        type: boolean
+        description: |
+          Specify "true" to force and set the ReadOnly property in VolumeMounts to "true". If omitted, the default is "false". More info: http://kubernetes.io/docs/user-guide/volumes#awselasticblockstore
+        default: false
+      volumeID:
+        type: string
+        description: |
+          Unique ID of the persistent disk resource in AWS (Amazon EBS volume). More info: http://kubernetes.io/docs/user-guide/volumes#awselasticblockstore
+
   org.alien4cloud.extended.container.types.kubernetes.Service:
     derived_from: org.alien4cloud.extended.container.types.kubernetes.abstract.Service
-
 
   org.alien4cloud.extended.container.types.kubernetes.abstract.Service:
     abstract: true
@@ -557,15 +620,13 @@ node_types:
   org.alien4cloud.extended.container.types.kubernetes.Deployment:
     derived_from: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
 
-
   org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment:
     abstract: true
     derived_from: org.alien4cloud.extended.container.types.kubernetes.Base
     description: >
       Represent a kubernetes Deployment
     capabilities:
-      host:
-        type: tosca.capabilities.Container
+      host: tosca.capabilities.Container
     properties:
       apiVersion:
         type: string
@@ -620,8 +681,8 @@ node_types:
           relationship: tosca.relationships.ConnectsTo
           occurrences: [0, UNBOUND]
     capabilities:
-      docker_endpoint:
-        type: tosca.capabilities.Endpoint
+      attach: alien.capabilities.DockerVolumeAttachment
+      docker_endpoint: tosca.capabilities.Endpoint
     properties:
       container:
         type: org.alien4cloud.extended.container.data.ContainerSpec

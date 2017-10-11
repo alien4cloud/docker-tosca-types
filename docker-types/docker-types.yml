@@ -86,18 +86,19 @@ node_types:
           occurrences: [0, 1]
 
   alien.nodes.DockerExtVolume:
+    abstract: true
     derived_from: tosca.nodes.BlockStorage
     tags:
       icon: /images/volume.png
-    properties:
-      volume_name:
-        type: string
-        description: Name of the volume.  If it does not exist, it is created implicitly. Otherwise, the existing volume is reused.
-        required: true
-      device:
-        type: string
-        required: false
-        default: ""
+    # properties:
+    #   volume_name:
+    #     type: string
+    #     description: Name of the volume.  If it does not exist, it is created implicitly. Otherwise, the existing volume is reused.
+    #     required: true
+    #   device:
+    #     type: string
+    #     required: false
+    #     default: ""
     requirements:
       - attachment:
           capability: alien.capabilities.DockerVolumeAttachment
