@@ -1,0 +1,125 @@
+tosca_definitions_version: alien_dsl_2_0_0
+
+metadata:
+  template_name: docker-draft.02-autoscaling-nodecellar-25
+  template_version: 2.0.0-SNAPSHOT
+  template_author: alien4cloud
+
+description: |
+  The result of the nodecellar topology after the translation of ContainerUnit and Containers into Kubernetes Deployments nodes.
+
+imports:
+  - docker-types:1.4.0-SNAPSHOT
+  - tosca-normative-types:1.0.0-SNAPSHOT
+  - kubernetes-modifier-types:1.4.0-SNAPSHOT
+
+topology_template:
+
+  node_templates:
+
+    ContainerDeploymentUnit:
+      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployments
+      properties:
+        apiVersion: extensions/v1beta1
+        kind: Deployment
+        metadata:
+          name: ContainerDeploymentUnit # Should generate a uniq name
+        deployment:
+          spec:
+            replicas: 1 # HOWTO: only the default nb instances is used and set here ?
+
+    Nodecellar:
+      type: org.alien4cloud.extended.container.kubernetes.abstract.Container
+      requirements:
+        # HOWTO: Should we change relationships ?
+        - host:
+            node: ContainerDeploymentUnit
+            capability: tosca.capabilities.Container.Docker
+            relationship: tosca.relationships.HostedOn
+        - mongo_db:
+            type_requirement: docker_endpoint
+            node: Mongo
+            capability: tosca.capabilities.Endpoint
+            relationship: tosca.relationships.ConnectsTo
+      capabilities:
+        # HOWTO: Should we change capabilities ?
+        docker_endpoint:
+          properties:
+            port: 3000
+            protocol: tcp
+            secure: false
+            network_name: PRIVATE
+            initiator: source
+      properties:
+        container:
+          env:
+            # Merge env variables coming from properties and implementation interfaces
+            LOG_LEVEL: "DEBUG"
+            MONGO_HOST: { get_property: [TARGET, mongo_db, ip_address] }
+            MONGO_PORT: { get_property: [TARGET, mongo_db, port] }
+            NODECELLAR_PORT: 3000
+          # HOWTO: handle repositories ?
+          image: afraisse/nodecellar:exp
+          resources:
+            requests:
+              memory: 1024M
+              cpu: 1.0
+            limits:
+              memory: 1024M
+              cpu: 1.0
+          command: ["/bin/bash", "-c", "cd /nodecellar && nodejs server.js" ]
+
+    ContainerDeploymentUnit_Mongo:
+      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployments
+      properties:
+        apiVersion: extensions/v1beta1
+        kind: Deployment
+        metadata:
+          name: ContainerDeploymentUnit # Should generate a uniq name
+        deployment:
+          spec:
+            replicas: 1
+
+    Mongo:
+      type: org.alien4cloud.extended.container.kubernetes.abstract.Container
+      requirements:
+        - host:
+            node: ContainerDeploymentUnit_Mongo
+            capability: tosca.capabilities.Container.Docker
+            relationship: tosca.relationships.HostedOn
+      capabilities:
+        # the original mongo_db capability has been transformed into a docker_endpoint
+        # what happens if the container has several endpoints ?
+        docker_endpoint:
+          properties:
+            port: 27017
+            protocol: tcp
+            secure: false
+            network_name: PRIVATE
+            initiator: source
+      properties:
+        container:
+          image: mongo:latest
+          resources:
+            requests:
+              memory: 512M
+              cpu: 1.0
+            limits:
+              memory: 512M
+              cpu: 1.0
+
+  policies:
+    - auto_scaling_policy:
+        # the abstract policy has been matched with this concrete implementation
+        type: org.alien4cloud.extended.container.policy.kubernetes.AutoscalingPolicy
+        properties:
+          spec:
+            # all these properties has been filled during matching
+            minReplicas: 1
+            maxReplicas: 10
+            metrics_ressources:
+              - type: Resource
+                resource:
+                  name: cpu
+                  targetAverageUtilization: 50
+        targets: [ContainerDeploymentUnit]
