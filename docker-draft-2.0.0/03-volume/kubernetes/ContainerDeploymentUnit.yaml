@@ -10,8 +10,8 @@ spec:
       - name: Nodecellar # Should generate a uniq name
         env:
           LOG_LEVEL: "DEBUG"
-          MONGO_HOST: { get_attribute: [TARGET, mongo_db, ip_address] }
-          MONGO_PORT: { get_attribute: [TARGET, mongo_db, port] }
+          MONGO_HOST: localhost
+          MONGO_PORT: 27017
           NODECELLAR_PORT: 3000
         image: afraisse/nodecellar:exp
         resources:
@@ -23,7 +23,7 @@ spec:
             cpu: 1.0
         command: ["/bin/bash", "-c", "cd /nodecellar && nodejs server.js" ]
         ports:
-        - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
+        - containerPort: 3000
         volumeMounts:
         - mountPath: /tmp/var
           name: DockerExtVolume
@@ -37,7 +37,7 @@ spec:
             memory: 512M
             cpu: 1.0
         ports:
-        - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
+        - containerPort: 27017
         volumeMounts:
         - mountPath: /tmp/var
           name: DockerExtVolume

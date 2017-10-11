@@ -26,7 +26,7 @@ topology_template:
   node_templates:
 
     ContainerDeploymentUnit:
-      type: org.alien4cloud.extended.container.kubernetes.KubenetesResource
+      type: org.alien4cloud.extended.container.kubernetes.resource.Deployment
       # Missing capa & req
       requirements:
         - dependency:
@@ -43,9 +43,21 @@ topology_template:
         type: tosca.artifacts.File
         file: kubernetes/ContainerDeploymentUnit.yaml
         description: A kubernetes file
+    interfaces:
+      Standard:
+        create:
+          inputs:
+            DEPENDENCY_IP_ADDRESS: { get_attribute: [ SELF, dependency, ip_address] }
+            DEPENDENCY_PORT: { get_attribute: [ SELF, dependency, port] }
+            DEPENDENCY_2_IP_ADDRESS: { get_attribute: [ SELF, dependency, ip_address] }
+            DEPENDENCY_2_PORT: { get_attribute: [ SELF, dependency, port] }
+          implementation: kubectl_service_wrapper.sh
+          description: |
+            - Deploy the service onto kubernets
+            - Export the service ip_address and port to expose it as attributes
 
     Nodecellar_Service:
-      type: org.alien4cloud.extended.container.kubernetes.KubenetesResource
+      type: org.alien4cloud.extended.container.kubernetes.resource.Service
       # Missing capa & req
       requirements:
         - dependency:
@@ -59,7 +71,7 @@ topology_template:
         description: A kubernetes file
 
     ContainerDeploymentUnit_Mongo:
-      type: org.alien4cloud.extended.container.kubernetes.KubenetesResource
+      type: org.alien4cloud.extended.container.kubernetes.resource.Deployment
       # Missing capa & req
       artifacts:
         type: tosca.artifacts.File
@@ -67,7 +79,7 @@ topology_template:
         description: A kubernetes file
 
     Mongo_Service:
-      type: org.alien4cloud.extended.container.kubernetes.KubenetesResource
+      type: org.alien4cloud.extended.container.kubernetes.resource.Service
       # Missing capa & req
       requirements:
         - dependency:
@@ -81,7 +93,7 @@ topology_template:
         description: A kubernetes file
 
     ContainerDeploymentUnit_Mongo_2:
-      type: org.alien4cloud.extended.container.kubernetes.KubenetesResource
+      type: org.alien4cloud.extended.container.kubernetes.resource.Deployment
       # Missing capa & req
       artifacts:
         type: tosca.artifacts.File
@@ -89,7 +101,7 @@ topology_template:
         description: A kubernetes file
 
     Mongo_2_Service:
-      type: org.alien4cloud.extended.container.kubernetes.KubenetesResource
+      type: org.alien4cloud.extended.container.kubernetes.resource.Service
       # Missing capa & req
       requirements:
         - dependency:

@@ -685,7 +685,8 @@ org.alien4cloud.extended.container.types.kubernetes.volume.AWSElasticBlockStoreV
         type: org.alien4cloud.extended.container.data.ContainerSpec
 
 
-  org.alien4cloud.extended.container.kubernetes.KubenetesResource:
+  org.alien4cloud.extended.container.kubernetes.resource.Base:
+    abstract: true
     derived_from: tosca.nodes.Root
     description: >
       Represent a kubernetes final resource after node matching (Pod, ReplicaSet or Deployment)
@@ -693,12 +694,32 @@ org.alien4cloud.extended.container.types.kubernetes.volume.AWSElasticBlockStoreV
       type: tosca.artifacts.File
       file: kubernetes/deployment.yaml
       description: A kubernetes file
-    # Missing capa & req
+
+  org.alien4cloud.extended.container.kubernetes.resource.Deployment:
+    abstract: true
+    derived_from: org.alien4cloud.extended.container.kubernetes.resource.Base
     interfaces:
       Standard:
         create:
-          implementation: kubectl_wrapper.sh
-          description: Create kubernetes a resource using the artifact file
+          implementation: kubectl_deployment_wrapper.sh
+          description: |
+            - filter variable in the artifact file
+            - Deploy the deployment onto kubernets
+            - Export some informations to expose it as attributes ?
+
+  org.alien4cloud.extended.container.kubernetes.resource.Service:
+    abstract: true
+    derived_from: org.alien4cloud.extended.container.kubernetes.resource.Base
+    attributes:
+      ip_address: { get_operation_output: [SELF, Standard, create, IP_ADDRESS] }
+      port: { get_operation_output: [SELF, Standard, create, PORT] }
+    interfaces:
+      Standard:
+        create:
+          implementation: kubectl_service_wrapper.sh
+          description: |
+            - Deploy the service onto kubernets
+            - Export the service ip_address and port to expose it as attributes
 
 
 policy_types:

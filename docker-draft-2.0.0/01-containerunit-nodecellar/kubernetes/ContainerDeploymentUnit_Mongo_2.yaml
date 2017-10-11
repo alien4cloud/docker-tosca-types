@@ -31,4 +31,4 @@ spec:
               memory: 512M
               cpu: 1.0
           ports:
-          - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
+          - containerPort: 27017
