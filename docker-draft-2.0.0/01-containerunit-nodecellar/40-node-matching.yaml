@@ -37,7 +37,7 @@ topology_template:
           replicas: 1 # HOWTO: only the default nb instances is used and set here ?
 
     Nodecellar_Service:
-      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      type: org.alien4cloud.extended.container.kubernetes.Service
       requirements:
         - dependency:
             type_requirement: dependency
@@ -175,7 +175,7 @@ topology_template:
                       topologyKey: kubernetes.io/hostname
 
     Mongo_Service:
-      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      type: org.alien4cloud.extended.container.kubernetes.Service
       requirements:
         - dependency:
             type_requirement: dependency
@@ -253,7 +253,7 @@ topology_template:
                       topologyKey: kubernetes.io/hostname
 
     Mongo_2_Service:
-      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      type: org.alien4cloud.extended.container.kubernetes.Service
       requirements:
         - dependency:
             type_requirement: dependency
