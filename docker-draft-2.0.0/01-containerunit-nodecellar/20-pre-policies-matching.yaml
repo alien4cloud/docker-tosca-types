@@ -53,8 +53,6 @@ topology_template:
           ports:
             - name: Nodecellar_docker_endpoint
               port: { get_property: [Nodecellar, docker_endpoint, port] }
-            - name: Nodecellar_2_docker_endpoint
-              port: { get_property: [Nodecellar_2, docker_endpoint, port] }
           selector:
             app: ContainerDeploymentUnit # podname
           type: NodePort
@@ -103,6 +101,25 @@ topology_template:
           ports:
           - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
 
+    Nodecellar_2_Service:
+      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      requirements:
+        dependency:
+          node: ContainerDeploymentUnit
+          capability: tosca.capabilities.Node
+          relationship: tosca.relationships.DependsOn
+      properties:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: Nodecellar_2_Service # Should generate a uniq name
+        spec:
+          ports:
+            - name: Nodecellar_2_docker_endpoint
+              port: { get_property: [Nodecellar_2, docker_endpoint, port] }
+          selector:
+            app: ContainerDeploymentUnit # podname
+          type: NodePort
 
     Nodecellar_2:
       type: org.alien4cloud.extended.container.kubernetes.abstract.Container

@@ -70,6 +70,20 @@ topology_template:
         file: kubernetes/Nodecellar_Service.yaml
         description: A kubernetes file
 
+    Nodecellar_2_Service:
+      type: org.alien4cloud.extended.container.kubernetes.resource.Service
+      # Missing capa & req
+      requirements:
+        - dependency:
+            type_requirement: dependency
+            node: ContainerDeploymentUnit
+            capability: tosca.capabilities.Node
+            relationship: tosca.relationships.DependsOn
+      artifacts:
+        type: tosca.artifacts.File
+        file: kubernetes/Nodecellar_2_Service.yaml
+        description: A kubernetes file
+
     ContainerDeploymentUnit_Mongo:
       type: org.alien4cloud.extended.container.kubernetes.resource.Deployment
       # Missing capa & req

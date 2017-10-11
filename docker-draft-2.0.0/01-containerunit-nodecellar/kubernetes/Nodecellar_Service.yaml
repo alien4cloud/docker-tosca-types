@@ -6,8 +6,6 @@ spec:
   ports:
     - name: Nodecellar_docker_endpoint
       port: { get_property: [Nodecellar, docker_endpoint, port] }
-    - name: Nodecellar_2_docker_endpoint
-      port: { get_property: [Nodecellar_2, docker_endpoint, port] }
   selector:
     app: ContainerDeploymentUnit # podname
   type: NodePort
