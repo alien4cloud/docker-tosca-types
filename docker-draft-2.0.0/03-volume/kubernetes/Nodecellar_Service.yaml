@@ -5,7 +5,7 @@ metadata:
 spec:
   ports:
     - name: Nodecellar_docker_endpoint
-      port: { get_property: [Nodecellar, docker_endpoint, port] }
+      port: 3000
   selector:
     app: ContainerDeploymentUnit # podname
   type: NodePort

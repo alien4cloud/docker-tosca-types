@@ -90,7 +90,7 @@ topology_template:
             LOG_LEVEL: "DEBUG"
             MONGO_HOST: { get_attribute: [TARGET, mongo_db, ip_address] }
             MONGO_PORT: { get_attribute: [TARGET, mongo_db, port] }
-            NODECELLAR_PORT: 3000
+            NODECELLAR_PORT: { get_property: [TARGET, nodecellar_app, port] }
           # HOWTO: handle repositories ?
           image: afraisse/nodecellar:exp
           resources:
@@ -133,7 +133,7 @@ topology_template:
             LOG_LEVEL: "DEBUG"
             MONGO_HOST: { get_attribute: [TARGET, mongo_db, ip_address] }
             MONGO_PORT: { get_attribute: [TARGET, mongo_db, port] }
-            NODECELLAR_PORT: 4000
+            NODECELLAR_PORT: { get_property: [TARGET, nodecellar_app, port] }
           # HOWTO: handle repositories ?
           image: afraisse/nodecellar:exp
           resources:

@@ -5,7 +5,7 @@ metadata:
 spec:
   ports:
     - name: Mongo_docker_endpoint
-      port: { get_property: [Mongo, docker_endpoint, port] }
+      port: 27017
   selector:
     app: ContainerDeploymentUnit_Mongo # podname
   type: NodePort
