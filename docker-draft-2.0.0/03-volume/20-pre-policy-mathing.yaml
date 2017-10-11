@@ -21,7 +21,7 @@ topology_template:
   node_templates:
 
     DockerExtVolume:
-      type: alien.nodes.DockerExtVolume
+      type: org.alien4cloud.extended.container.types.kubernetes.volume.Base
       requirements:
         - host:
             node: ContainerDeploymentUnit

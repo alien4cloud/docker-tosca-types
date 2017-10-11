@@ -543,7 +543,6 @@ node_types:
         type: string
 
   org.alien4cloud.extended.container.types.kubernetes.volume.PersistentVolumeClaimVolumeSource:
-    abstract: true
     derived_from: org.alien4cloud.extended.container.types.kubernetes.volume.Base
     properties:
       claimName:
@@ -557,7 +556,6 @@ node_types:
         default: false
 
   org.alien4cloud.extended.container.types.kubernetes.volume.HostPathVolumeSource:
-    abstract: true
     derived_from: org.alien4cloud.extended.container.types.kubernetes.volume.Base
     properties:
       path:
@@ -566,7 +564,6 @@ node_types:
           Path of the directory on the host. More info: http://kubernetes.io/docs/user-guide/volumes#hostpath
 
 org.alien4cloud.extended.container.types.kubernetes.volume.AWSElasticBlockStoreVolumeSource:
-    abstract: true
     derived_from: org.alien4cloud.extended.container.types.kubernetes.volume.Base
     properties:
       fsType:
