@@ -7,7 +7,7 @@ metadata:
 
 
 description: |
-  The result of the nodecellar topology after the translation of ContainerUnit and Containers into Kubernetes Deployments nodes.
+  The result of the nodecellar topology after the translation of ContainerUnit and Containers into Kubernetes Deployment nodes.
 
 
 imports:
@@ -26,13 +26,37 @@ topology_template:
   node_templates:
 
     ContainerDeploymentUnit:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployments
+      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
       properties:
+        apiVersion: apps/v1beta1
+        kind: Deployment
         metadata:
           name: ContainerDeploymentUnit # Should generate a uniq name
-        deployment:
-          spec:
-            replicas: 1 # HOWTO: only the default nb instances is used and set here ?
+        spec:
+          replicas: 1 # HOWTO: only the default nb instances is used and set here ?
+
+    Nodecellar_Service:
+      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      requirements:
+        - dependency:
+            type_requirement: dependency
+            node: ContainerDeploymentUnit
+            capability: tosca.capabilities.Node
+            relationship: tosca.relationships.DependsOn
+      properties:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: Nodecellar_Service # Should generate a uniq name
+        spec:
+          ports:
+            - name: Nodecellar_docker_endpoint
+              port: { get_property: [Nodecellar, docker_endpoint, port] }
+            - name: Nodecellar_2_docker_endpoint
+              port: { get_property: [Nodecellar_2, docker_endpoint, port] }
+          selector:
+            app: ContainerDeploymentUnit # podname
+          type: NodePort
 
     Nodecellar:
       type: org.alien4cloud.extended.container.kubernetes.abstract.Container
@@ -119,31 +143,52 @@ topology_template:
           command: ["/bin/bash", "-c", "cd /nodecellar && nodejs server.js" ]
 
 
-
     ContainerDeploymentUnit_Mongo:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployments
+      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
       properties:
+        apiVersion: apps/v1beta1
+        kind: Deployment
         metadata:
-          name: Mongo # Should generate a uniq name
+          name: ContainerDeploymentUnit_Mongo # Should generate a uniq name
           labels:
             anti_affinity_label: Mongo
-        deployment:
-          spec:
-            replicas: 1
-            template:
-              spec:
-                affinity:
-                  podAntiAffinity:
-                    preferredDuringSchedulingIgnoredDuringExecution:
-                    - weight: 100
-                      podAffinityTerm:
-                        labelSelector:
-                          matchExpressions:
-                          - key: anti_affinity_label
-                            operator: In
-                            values:
-                            - Mongo_2
-                        topologyKey: kubernetes.io/hostname
+        spec:
+          replicas: 1
+          template:
+            spec:
+              affinity:
+                podAntiAffinity:
+                  preferredDuringSchedulingIgnoredDuringExecution:
+                  - weight: 100
+                    podAffinityTerm:
+                      labelSelector:
+                        matchExpressions:
+                        - key: anti_affinity_label
+                          operator: In
+                          values:
+                          - ContainerDeploymentUnit_Mongo_2
+                      topologyKey: kubernetes.io/hostname
+
+    Mongo_Service:
+      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      requirements:
+        - dependency:
+            type_requirement: dependency
+            node: ContainerDeploymentUnit_Mongo
+            capability: tosca.capabilities.Node
+            relationship: tosca.relationships.DependsOn
+      properties:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: Mongo_Service # Should generate a uniq name
+        spec:
+          ports:
+            - name: Mongo_docker_endpoint
+              port: { get_property: [Mongo, docker_endpoint, port] }
+          selector:
+            app: ContainerDeploymentUnit_Mongo # podname
+          type: NodePort
 
     Mongo:
       type: org.alien4cloud.extended.container.kubernetes.abstract.Container
@@ -173,31 +218,54 @@ topology_template:
               cpu: 1.0
 
 
-
     ContainerDeploymentUnit_Mongo_2:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployments
+      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
       properties:
+        apiVersion: apps/v1beta1
+        kind: Deployment
+        metadata:
+          name: ContainerDeploymentUnit_Mongo_2 # Should generate a uniq name
         metadata:
           name: Mongo_2
           labels:
             anti_affinity_label: Mongo_2
-        deployment:
-          spec:
-            replicas: 1
-            template:
-              spec:
-                affinity:
-                  podAntiAffinity:
-                    preferredDuringSchedulingIgnoredDuringExecution:
-                    - weight: 100
-                      podAffinityTerm:
-                        labelSelector:
-                          matchExpressions:
-                          - key: anti_affinity_label
-                            operator: In
-                            values:
-                            - Mongo
-                        topologyKey: kubernetes.io/hostname
+        spec:
+          replicas: 1
+          template:
+            spec:
+              affinity:
+                podAntiAffinity:
+                  preferredDuringSchedulingIgnoredDuringExecution:
+                  - weight: 100
+                    podAffinityTerm:
+                      labelSelector:
+                        matchExpressions:
+                        - key: anti_affinity_label
+                          operator: In
+                          values:
+                          - ContainerDeploymentUnit_Mongo
+                      topologyKey: kubernetes.io/hostname
+
+    Mongo_2_Service:
+      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      requirements:
+        - dependency:
+            type_requirement: dependency
+            node: ContainerDeploymentUnit_Mongo_2
+            capability: tosca.capabilities.Node
+            relationship: tosca.relationships.DependsOn
+      properties:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: Mongo_2_Service # Should generate a uniq name
+        spec:
+          ports:
+            - name: Mongo_2_docker_endpoint
+              port: { get_property: [Mongo_2, docker_endpoint, port] }
+          selector:
+            app: ContainerDeploymentUnit_Mongo_2 # podname
+          type: NodePort
 
 
     Mongo_2:

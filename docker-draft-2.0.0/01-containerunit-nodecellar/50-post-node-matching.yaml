@@ -7,7 +7,7 @@ metadata:
 
 
 description: |
-  The result of the nodecellar topology after the translation of ContainerUnit and Containers into Kubernetes Deployments nodes.
+  The result of the nodecellar topology after the translation of ContainerUnit and Containers into Kubernetes Deployment nodes.
 
 
 imports:
@@ -28,9 +28,34 @@ topology_template:
     ContainerDeploymentUnit:
       type: org.alien4cloud.extended.container.kubernetes.KubenetesResource
       # Missing capa & req
+      requirements:
+        - dependency:
+            type_requirement: dependency
+            node: Mongo_Service
+            capability: tosca.capabilities.Node
+            relationship: tosca.relationships.DependsOn
+        - dependency_2:
+            type_requirement: dependency
+            node: Mongo_2_Service
+            capability: tosca.capabilities.Node
+            relationship: tosca.relationships.DependsOn
       artifacts:
         type: tosca.artifacts.File
         file: kubernetes/ContainerDeploymentUnit.yaml
+        description: A kubernetes file
+
+    Nodecellar_Service:
+      type: org.alien4cloud.extended.container.kubernetes.KubenetesResource
+      # Missing capa & req
+      requirements:
+        - dependency:
+            type_requirement: dependency
+            node: ContainerDeploymentUnit
+            capability: tosca.capabilities.Node
+            relationship: tosca.relationships.DependsOn
+      artifacts:
+        type: tosca.artifacts.File
+        file: kubernetes/Nodecellar_Service.yaml
         description: A kubernetes file
 
     ContainerDeploymentUnit_Mongo:
@@ -41,6 +66,20 @@ topology_template:
         file: kubernetes/ContainerDeploymentUnit_Mongo.yaml
         description: A kubernetes file
 
+    Mongo_Service:
+      type: org.alien4cloud.extended.container.kubernetes.KubenetesResource
+      # Missing capa & req
+      requirements:
+        - dependency:
+            type_requirement: dependency
+            node: ContainerDeploymentUnit_Mongo
+            capability: tosca.capabilities.Node
+            relationship: tosca.relationships.DependsOn
+      artifacts:
+        type: tosca.artifacts.File
+        file: kubernetes/Mongo_Service.yaml
+        description: A kubernetes file
+
     ContainerDeploymentUnit_Mongo_2:
       type: org.alien4cloud.extended.container.kubernetes.KubenetesResource
       # Missing capa & req
@@ -49,3 +88,16 @@ topology_template:
         file: kubernetes/ContainerDeploymentUnit_Mongo_2.yaml
         description: A kubernetes file
 
+    Mongo_2_Service:
+      type: org.alien4cloud.extended.container.kubernetes.KubenetesResource
+      # Missing capa & req
+      requirements:
+        - dependency:
+            type_requirement: dependency
+            node: ContainerDeploymentUnit_Mongo_2
+            capability: tosca.capabilities.Node
+            relationship: tosca.relationships.DependsOn
+      artifacts:
+        type: tosca.artifacts.File
+        file: kubernetes/Mongo_2_Service.yaml
+        description: A kubernetes file

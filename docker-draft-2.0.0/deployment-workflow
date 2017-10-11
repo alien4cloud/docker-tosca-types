@@ -1,0 +1,16 @@
+ - pre-location-matching
+location-matching (static)
+ - post-location-matching
+ - pre-input-injection
+input-injection (static)
+ - post-input-injection
+ - pre-policies-matching
+policies-matching (static)
+ - post-policies-matching
+ - pre-node-matching
+node-matching (static)
+ - post-node-matching
+ - pre-matched-node-setup
+matched-node-setup ( static - injection des props config par user)
+ - post-matched-node-setup
+topology-validation (static)

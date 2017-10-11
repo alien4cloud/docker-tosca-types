@@ -1,7 +1,7 @@
-apiVersion: extension/v1beta # for versions before 1.7.0 use apps/v1beta1
+apiVersion: apps/v1beta1 # for versions before 1.7.0 use apps/v1beta1
 kind: Deployment
 metadata:
-  name: ContainerDeploymentUnit
+  name: ContainerDeploymentUnit # Should generate a uniq name
 spec:
   replicas: 1
   template:
