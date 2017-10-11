@@ -22,13 +22,14 @@ spec:
             memory: 1024M
             cpu: 1.0
         command: ["/bin/bash", "-c", "cd /nodecellar && nodejs server.js" ]
-
+        ports:
+        - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
       - name: Nodecellar_2
         env:
           LOG_LEVEL: "DEBUG"
           MONGO_HOST: { get_attribute: [TARGET, mongo_db, ip_address] }
           MONGO_PORT: { get_property: [TARGET, mongo_db, port] }
-          NODECELLAR_PORT: 3000
+          NODECELLAR_PORT: 4000
         image: afraisse/nodecellar:exp
         resources:
           requests:
@@ -38,3 +39,5 @@ spec:
             memory: 1024M
             cpu: 1.0
         command: ["/bin/bash", "-c", "cd /nodecellar && nodejs server.js" ]
+        ports:
+        - containerPort: { get_attribute: [SELF, docker_endpoint, port] }

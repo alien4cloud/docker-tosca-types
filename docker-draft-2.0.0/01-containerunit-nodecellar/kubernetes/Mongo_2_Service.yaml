@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: Mongo_2_Service # Should generate a uniq name
+spec:
+  ports:
+    - name: Mongo_2_docker_endpoint
+      port: { get_property: [Mongo_2, docker_endpoint, port] }
+  selector:
+    app: ContainerDeploymentUnit_Mongo_2 # podname
+  type: NodePort

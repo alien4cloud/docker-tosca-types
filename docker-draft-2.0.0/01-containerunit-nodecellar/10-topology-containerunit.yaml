@@ -91,7 +91,7 @@ topology_template:
         nodecellar_app:
           properties:
             docker_bridge_port_mapping: 0
-            port: 3000
+            port: 4000
             protocol: tcp
             secure: false
             network_name: PRIVATE

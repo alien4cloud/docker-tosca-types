@@ -68,7 +68,7 @@ topology_template:
             relationship: tosca.relationships.HostedOn
         - mongo_db:
             type_requirement: docker_endpoint
-            node: Mongo
+            node: Mongo_Service
             capability: tosca.capabilities.Endpoint
             relationship: tosca.relationships.ConnectsTo
       capabilities:
@@ -99,6 +99,8 @@ topology_template:
               memory: 1024M
               cpu: 1.0
           command: ["/bin/bash", "-c", "cd /nodecellar && nodejs server.js" ]
+          ports:
+          - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
 
 
     Nodecellar_2:
@@ -110,13 +112,13 @@ topology_template:
             relationship: tosca.relationships.HostedOn
         - mongo_db:
             type_requirement: docker_endpoint
-            node: Mongo_2
+            node: Mongo_2_Service
             capability: tosca.capabilities.Endpoint
             relationship: tosca.relationships.ConnectsTo
       capabilities:
         docker_endpoint:
           properties:
-            port: 3000
+            port: 4000
             protocol: tcp
             secure: false
             network_name: PRIVATE
@@ -129,7 +131,7 @@ topology_template:
             LOG_LEVEL: "DEBUG"
             MONGO_HOST: { get_attribute: [TARGET, mongo_db, ip_address] }
             MONGO_PORT: { get_attribute: [TARGET, mongo_db, port] }
-            NODECELLAR_PORT: 3000
+            NODECELLAR_PORT: 4000
           # HOWTO: handle repositories ?
           image: afraisse/nodecellar:exp
           resources:
@@ -140,11 +142,13 @@ topology_template:
               memory: 1024M
               cpu: 1.0
           command: ["/bin/bash", "-c", "cd /nodecellar && nodejs server.js" ]
+          ports:
+          - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
 
 
 
     ContainerDeploymentUnit_Mongo:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployments
+      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
       properties:
         apiVersion: apps/v1beta1
         kind: Deployment
@@ -199,9 +203,11 @@ topology_template:
             limits:
               memory: 512M
               cpu: 1.0
+          ports:
+          - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
 
     ContainerDeploymentUnit_Mongo_2:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployments
+      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
       properties:
         apiVersion: apps/v1beta1
         kind: Deployment
@@ -256,6 +262,8 @@ topology_template:
             limits:
               memory: 512M
               cpu: 1.0
+          ports:
+          - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
 
   policies:
     - mongo_anti_affinity:
