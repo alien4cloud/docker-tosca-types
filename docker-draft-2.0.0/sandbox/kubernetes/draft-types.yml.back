@@ -17,15 +17,15 @@ data_types:
     derived_from: tosca.datatypes.Root
     properties:
       nodeAffinity:
-        type: NodeAffinity 
+        type: NodeAffinity
         description: >
           Describes node affinity scheduling rules for the pod.
       podAffinity:
-        type: PodAffinity 
+        type: PodAffinity
         description: >
           escribes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).
       podAntiAffinity:
-        type: PodAntiAffinity 
+        type: PodAntiAffinity
         description: >
           escribes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).
 
@@ -136,14 +136,14 @@ data_types:
             Optional duration in seconds the pod may be active on the node relative to StartTime before the system will actively try to mark it failed and kill associated containers. Value must be a positive integer.
         affinity:
           type: Affinity
-          description: > 
+          description: >
             If specified, the pod's scheduling constraints
         automountServiceAccountToken:
           type: boolean
           description: >
             AutomountServiceAccountToken indicates whether a service account token should be automatically mounted.
         containers:
-          type: list 
+          type: list
           entry_schema:
             type: Container
             description: >
@@ -281,7 +281,7 @@ data_types:
             Optional duration in seconds the pod may be active on the node relative to StartTime before the system will actively try to mark it failed and kill associated containers. Value must be a positive integer.
         affinity:
           type: Affinity
-          description: > 
+          description: >
             If specified, the pod's scheduling constraints
         imagePullSecrets:
           type: list
@@ -289,7 +289,7 @@ data_types:
             type: LocalObjectReference
             description: >
         containers:
-          type: list 
+          type: list
           entry_schema:
             type: Container
             description: >
@@ -342,7 +342,7 @@ node_types:
     derived_from: tosca.nodes.Root
     description: >
       Represent a kubernetes Pod.
-    properties: 
+    properties:
       apiVersion:
         type: string
       kind:
@@ -351,10 +351,10 @@ node_types:
         type: map
         entry_schema:
           type: string
-      PodSpec: 
+      PodSpec:
         type: PodSpec
 
-  org.alien4cloud.extended.container.kubernetes.Service_ContainerUnit:
+  org.alien4cloud.kubernetes.api.types.Service_ContainerUnit:
 
   org.alien4cloud.extended.container.kubernetes.policies.AutoScaling_ContainerUnit:
 
@@ -363,7 +363,7 @@ node_types:
 
   org.alien4cloud.extended.container.kubernetes.policies.AutoScaling_ContainerUnit:
 
-  org.alien4cloud.extended.container.kubernetes.Service_ContainerUnit:
+  org.alien4cloud.kubernetes.api.types.Service_ContainerUnit:
 
 
   org.alien4cloud.extended.container.kubernetes.Deployments:
@@ -374,7 +374,7 @@ node_types:
     derived_from: tosca.nodes.Root
     description: >
       Represent a kubernetes Pod.
-    properties: 
+    properties:
       apiVersion:
         type: string
       kind:
@@ -383,7 +383,7 @@ node_types:
         type: map
         entry_schema:
           type: string
-      PodSpec: 
+      PodSpec:
         type: PodSpec
 
 
@@ -392,7 +392,7 @@ node_types:
     derived_from: tosca.nodes.Root
     description: >
       Represent a kubernetes ContainerSpec.
-    properties: 
+    properties:
       container:
         type: Container
 
@@ -420,7 +420,7 @@ node_types:
   #     template:
   #       type: PodTemplateSpec
 
-  # org.alien4cloud.extended.container.kubernetes.Service:
+  # org.alien4cloud.kubernetes.api.types.Service:
   #   derived_from: tosca.nodes.Root
   #   properties:
   #     # ...

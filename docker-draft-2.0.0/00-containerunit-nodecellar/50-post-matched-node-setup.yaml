@@ -10,14 +10,14 @@ description: |
 
 imports:
   - tosca-normative-types:1.0.0-SNAPSHOT
-  - kubernetes-modifier-types:2.0.0-SNAPSHOT
+  - org.alien4cloud.kubernetes.api:2.0.0-SNAPSHOT
 
 topology_template:
 
   node_templates:
 
     ContainerDeploymentUnit:
-      type: org.alien4cloud.extended.container.kubernetes.resource.Deployment
+      type: org.alien4cloud.kubernetes.api.types.DeploymentResource
       requirements:
         - dependency_Mongo_Service:
             type_requirement: dependency
@@ -48,7 +48,7 @@ topology_template:
             - Export the service ip_address and port to expose it as attributes
 
     Nodecellar_Service:
-      type: org.alien4cloud.extended.container.kubernetes.resource.Service
+      type: org.alien4cloud.kubernetes.api.types.ServiceResource
       requirements:
         - dependency:
             type_requirement: dependency
@@ -61,7 +61,7 @@ topology_template:
         description: A kubernetes file
 
     ContainerDeploymentUnit_Mongo:
-      type: org.alien4cloud.extended.container.kubernetes.resource.Deployment
+      type: org.alien4cloud.kubernetes.api.types.DeploymentResource
       capabilities:
         scalable:
           properties:
@@ -74,7 +74,7 @@ topology_template:
         description: A kubernetes file
 
     Mongo_Service:
-      type: org.alien4cloud.extended.container.kubernetes.resource.Service
+      type: org.alien4cloud.kubernetes.api.types.ServiceResource
       requirements:
         - dependency:
             type_requirement: dependency

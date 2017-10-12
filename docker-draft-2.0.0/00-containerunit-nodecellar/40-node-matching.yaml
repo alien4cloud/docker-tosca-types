@@ -12,14 +12,14 @@ imports:
   - docker-types:2.0.0-SNAPSHOT
   - tosca-normative-types:1.0.0-SNAPSHOT
   - docker-draft.sandbox.samples:2.0.0-SNAPSHOT
-  - kubernetes-modifier-types:2.0.0-SNAPSHOT
+  - org.alien4cloud.kubernetes.api:2.0.0-SNAPSHOT
 
 topology_template:
 
   node_templates:
 
     ContainerDeploymentUnit:
-      type: org.alien4cloud.extended.container.types.kubernetes.Deployment # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Deployment # Match node with a concrete type
       requirements:
         - dependency_Mongo_Service:
             type_requirement: dependency
@@ -41,7 +41,7 @@ topology_template:
           replicas: 1
 
     Nodecellar_Service:
-      type: org.alien4cloud.extended.container.kubernetes.Service # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Service # Match node with a concrete type
       requirements:
         - dependency:
             node: ContainerDeploymentUnit
@@ -61,7 +61,7 @@ topology_template:
           type: NodePort
 
     Nodecellar_Runtime:
-      type: org.alien4cloud.extended.container.types.kubernetes.Container # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Container # Match node with a concrete type
       requirements:
         - host:
             node: ContainerDeploymentUnit
@@ -121,7 +121,7 @@ topology_template:
             default_instances: 1
 
     ContainerDeploymentUnit_Mongo:
-      type: org.alien4cloud.extended.container.types.kubernetes.Deployment # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Deployment # Match node with a concrete type
       capabilities:
         scalable:
           properties:
@@ -137,7 +137,7 @@ topology_template:
           replicas: 1
 
     Mongo_Service:
-      type: org.alien4cloud.extended.container.kubernetes.Service # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Service # Match node with a concrete type
       requirements:
         - dependency:
             node: ContainerDeploymentUnit_Mongo
@@ -157,7 +157,7 @@ topology_template:
           type: NodePort
 
     Mongo_Runtime:
-      type: org.alien4cloud.extended.container.types.kubernetes.Container # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Container # Match node with a concrete type
       requirements:
         - host:
             node: ContainerDeploymentUnit_Mongo

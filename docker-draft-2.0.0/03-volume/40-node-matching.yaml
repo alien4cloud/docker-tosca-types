@@ -21,7 +21,7 @@ topology_template:
   node_templates:
 
     DockerExtVolume:
-      type: org.alien4cloud.extended.container.types.kubernetes.volume.HostPathVolumeSource
+      type: org.alien4cloud.kubernetes.api.types.volume.HostPathVolumeSource
       properties:
         name: DockerExtVolume
         path: /mnt/host_volume_path
@@ -119,7 +119,7 @@ topology_template:
           - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
 
     ContainerDeploymentUnit:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
+      type: org.alien4cloud.kubernetes.api.types.AbstractDeployment
       properties:
         apiVersion: apps/v1beta1
         kind: Deployment
@@ -129,7 +129,7 @@ topology_template:
           replicas: 1 # HOWTO: only the default nb instances is used and set here ?
 
     Nodecellar_Service:
-      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      type: org.alien4cloud.kubernetes.api.types.AbstractService
       requirements:
         dependency:
           node: ContainerDeploymentUnit
@@ -149,7 +149,7 @@ topology_template:
           type: NodePort
 
     Mongo_Service:
-      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      type: org.alien4cloud.kubernetes.api.types.AbstractService
       requirements:
         dependency:
           node: ContainerDeploymentUnit

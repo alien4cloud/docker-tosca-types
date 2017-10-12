@@ -14,7 +14,7 @@ imports:
   - docker-types:2.0.0-SNAPSHOT
   - tosca-normative-types:1.0.0-SNAPSHOT
   - docker-draft.sandbox.samples:2.0.0-SNAPSHOT
-  - kubernetes-modifier-types:2.0.0-SNAPSHOT
+  - org.alien4cloud.kubernetes.api:2.0.0-SNAPSHOT
 
 
 repositories:
@@ -28,7 +28,7 @@ topology_template:
   node_templates:
 
     ContainerDeploymentUnit:
-      type: org.alien4cloud.extended.container.types.kubernetes.Deployment # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Deployment # Match node with a concrete type
       requirements:
         - dependency_Mongo_Service:
             type_requirement: dependency
@@ -55,7 +55,7 @@ topology_template:
           replicas: 1
 
     Nodecellar_Service:
-      type: org.alien4cloud.extended.container.kubernetes.Service # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Service # Match node with a concrete type
       requirements:
         - dependency:
             node: ContainerDeploymentUnit
@@ -75,7 +75,7 @@ topology_template:
           type: NodePort
 
     Nodecellar_Runtime:
-      type: org.alien4cloud.extended.container.types.kubernetes.Container # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Container # Match node with a concrete type
       requirements:
         - host:
             node: ContainerDeploymentUnit
@@ -134,7 +134,7 @@ topology_template:
             default_instances: 1
 
     Nodecellar_2_Service:
-      type: org.alien4cloud.extended.container.kubernetes.Service # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Service # Match node with a concrete type
       requirements:
         - dependency:
             node: ContainerDeploymentUnit
@@ -154,7 +154,7 @@ topology_template:
           type: NodePort
 
     Nodecellar_2_Runtime:
-      type: org.alien4cloud.extended.container.types.kubernetes.Container # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Container # Match node with a concrete type
       requirements:
         - host:
             node: ContainerDeploymentUnit
@@ -213,7 +213,7 @@ topology_template:
             default_instances: 1
 
     ContainerDeploymentUnit_Mongo:
-      type: org.alien4cloud.extended.container.types.kubernetes.Deployment # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Deployment # Match node with a concrete type
       capabilities:
         scalable:
           properties:
@@ -245,7 +245,7 @@ topology_template:
                       topologyKey: kubernetes.io/hostname
 
     Mongo_Service:
-      type: org.alien4cloud.extended.container.kubernetes.Service # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Service # Match node with a concrete type
       requirements:
         - dependency:
             node: ContainerDeploymentUnit_Mongo
@@ -265,7 +265,7 @@ topology_template:
           type: NodePort
 
     Mongo_Runtime:
-      type: org.alien4cloud.extended.container.types.kubernetes.Container # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Container # Match node with a concrete type
       requirements:
         - host:
             node: ContainerDeploymentUnit_Mongo
@@ -311,7 +311,7 @@ topology_template:
             relationship: tosca.relationships.HostedOn
 
     ContainerDeploymentUnit_Mongo_2:
-      type: org.alien4cloud.extended.container.types.kubernetes.Deployment # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Deployment # Match node with a concrete type
       capabilities:
         scalable:
           properties:
@@ -333,7 +333,7 @@ topology_template:
                 podAntiAffinity:
                   preferredDuringSchedulingIgnoredDuringExecution:
                   - weight: 100
-                    podAffinityTerm:
+                    org.alien4cloud.kubernetes.api.datatypes.org.alien4cloud.kubernetes.api.datatypes.org.alien4cloud.kubernetes.api.datatypes.PodAffinityTerm:
                       labelSelector:
                         matchExpressions:
                         - key: anti_affinity_label
@@ -343,7 +343,7 @@ topology_template:
                       topologyKey: kubernetes.io/hostname
 
     Mongo_2_Service:
-      type: org.alien4cloud.extended.container.kubernetes.Service # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Service # Match node with a concrete type
       requirements:
         - dependency:
             node: ContainerDeploymentUnit_Mongo_2
@@ -363,7 +363,7 @@ topology_template:
           type: NodePort
 
     Mongo_2_Runtime:
-      type: org.alien4cloud.extended.container.types.kubernetes.Container # Match node with a concrete type
+      type: org.alien4cloud.kubernetes.api.types.Container # Match node with a concrete type
       requirements:
         - host:
             node: ContainerDeploymentUnit_Mongo_2
@@ -410,7 +410,7 @@ topology_template:
 
   policies:
     - mongo_anti_affinity:
-        type: org.alien4cloud.extended.container.policy.kubernetes.AntiAffinityLabel
+        type: org.alien4cloud.kubernetes.api.policies.AntiAffinityLabel
         description: The anti affinity policy between node 1 and 2
         targets: [ContainerDeploymentUnit_Mongo, ContainerDeploymentUnit_Mongo_2]
         properties:

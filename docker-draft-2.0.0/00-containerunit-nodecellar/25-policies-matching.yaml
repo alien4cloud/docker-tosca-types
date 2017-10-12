@@ -14,14 +14,14 @@ imports:
   - docker-types:2.0.0-SNAPSHOT
   - tosca-normative-types:1.0.0-SNAPSHOT
   - docker-draft.sandbox.samples:2.0.0-SNAPSHOT
-  - kubernetes-modifier-types:2.0.0-SNAPSHOT
+  - org.alien4cloud.kubernetes.api:2.0.0-SNAPSHOT
 
 topology_template:
 
   node_templates:
 
     ContainerDeploymentUnit:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
+      type: org.alien4cloud.kubernetes.api.types.AbstractDeployment
       requirements:
         - dependency_Mongo_Service:
             type_requirement: dependency
@@ -48,7 +48,7 @@ topology_template:
           replicas: 1
 
     Nodecellar_Service:
-      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      type: org.alien4cloud.kubernetes.api.types.AbstractService
       requirements:
         - dependency:
             node: ContainerDeploymentUnit
@@ -68,7 +68,7 @@ topology_template:
           type: NodePort
 
     Nodecellar_Runtime:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Container
+      type: org.alien4cloud.kubernetes.api.types.AbstractContainer
       requirements:
         - host:
             node: ContainerDeploymentUnit
@@ -127,7 +127,7 @@ topology_template:
             default_instances: 1
 
     ContainerDeploymentUnit_Mongo:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
+      type: org.alien4cloud.kubernetes.api.types.AbstractDeployment
       capabilities:
         scalable:
           properties:
@@ -143,7 +143,7 @@ topology_template:
           replicas: 1
 
     Mongo_Service:
-      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      type: org.alien4cloud.kubernetes.api.types.AbstractService
       requirements:
         - dependency:
             node: ContainerDeploymentUnit_Mongo
@@ -163,7 +163,7 @@ topology_template:
           type: NodePort
 
     Mongo_Runtime:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Container
+      type: org.alien4cloud.kubernetes.api.types.AbstractContainer
       requirements:
         - host:
             node: ContainerDeploymentUnit_Mongo
@@ -211,7 +211,7 @@ topology_template:
 
   policies:
     - mongo_anti_affinity:
-        type: org.alien4cloud.extended.container.policy.kubernetes.AntiAffinityLabel # Matched with the kubernetes AntiAffinityLabel policy
+        type: org.alien4cloud.kubernetes.api.policies.AntiAffinityLabel # Matched with the kubernetes AntiAffinityLabel policy
         description: The anti affinity policy between node 1 and 2
         targets: [ContainerDeploymentUnit_Mongo, ContainerDeploymentUnit_Mongo_2]
         properties:

@@ -14,7 +14,7 @@ imports:
   - docker-types:2.0.0-SNAPSHOT
   - tosca-normative-types:1.0.0-SNAPSHOT
   - docker-draft.sandbox.samples:2.0.0-SNAPSHOT
-  - kubernetes-modifier-types:2.0.0-SNAPSHOT
+  - org.alien4cloud.kubernetes.api:2.0.0-SNAPSHOT
 
 
 repositories:
@@ -28,7 +28,7 @@ topology_template:
   node_templates:
 
     ContainerDeploymentUnit:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment # Changed the node type
+      type: org.alien4cloud.kubernetes.api.types.AbstractDeployment # Changed the node type
       requirements:
         - dependency_Mongo_Service: # Add a dependency to Mongo_Service because Nodecellar has a relationship to a Mongo endpoint
             type_requirement: dependency
@@ -57,7 +57,7 @@ topology_template:
     #------------------------------------------------------
     # Create a new node for Kubernetes Service
     Nodecellar_Service:
-      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      type: org.alien4cloud.kubernetes.api.types.AbstractService
       requirements:
         - dependency:
             node: ContainerDeploymentUnit
@@ -78,7 +78,7 @@ topology_template:
 
     # Create Nodecellar Runtime to match with kubernetes container properties
     Nodecellar_Runtime:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Container
+      type: org.alien4cloud.kubernetes.api.types.AbstractContainer
       requirements:
         - host:
             node: ContainerDeploymentUnit
@@ -141,7 +141,7 @@ topology_template:
     #------------------------------------------------------
     # Create a new node for Kubernetes Service
     Nodecellar_2_Service:
-      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      type: org.alien4cloud.kubernetes.api.types.AbstractService
       requirements:
         - dependency:
             node: ContainerDeploymentUnit
@@ -162,7 +162,7 @@ topology_template:
 
     # Create Nodecellar_2 Runtime to match with kubernetes container properties
     Nodecellar_2_Runtime:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Container
+      type: org.alien4cloud.kubernetes.api.types.AbstractContainer
       requirements:
         - host:
             node: ContainerDeploymentUnit
@@ -225,7 +225,7 @@ topology_template:
     #------------------------------------------------------
     # Create a new node for Kubernetes Deployment for Mongo
     ContainerDeploymentUnit_Mongo:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
+      type: org.alien4cloud.kubernetes.api.types.AbstractDeployment
       capabilities:
         scalable:
           properties:
@@ -242,7 +242,7 @@ topology_template:
 
     # Create a new node for Kubernetes Service
     Mongo_Service:
-      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      type: org.alien4cloud.kubernetes.api.types.AbstractService
       requirements:
         - dependency:
             node: ContainerDeploymentUnit_Mongo
@@ -263,7 +263,7 @@ topology_template:
 
     # Create Mongo_Runtime to match with kubernetes container properties
     Mongo_Runtime:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Container
+      type: org.alien4cloud.kubernetes.api.types.AbstractContainer
       requirements:
         - host:
             node: ContainerDeploymentUnit_Mongo
@@ -312,7 +312,7 @@ topology_template:
     #------------------------------------------------------
     # Create a new node for Kubernetes Deployment for Mongo_2
     ContainerDeploymentUnit_Mongo_2:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
+      type: org.alien4cloud.kubernetes.api.types.AbstractDeployment
       capabilities:
         scalable:
           properties:
@@ -329,7 +329,7 @@ topology_template:
 
     # Create a new node for Kubernetes Service
     Mongo_2_Service:
-      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      type: org.alien4cloud.kubernetes.api.types.AbstractService
       requirements:
         - dependency:
             node: ContainerDeploymentUnit_Mongo_2
@@ -350,7 +350,7 @@ topology_template:
 
     # Create Mongo_Runtime to match with kubernetes container properties
     Mongo_2_Runtime:
-      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Container
+      type: org.alien4cloud.kubernetes.api.types.AbstractContainer
       requirements:
         - host:
             # hosted on added by modifier

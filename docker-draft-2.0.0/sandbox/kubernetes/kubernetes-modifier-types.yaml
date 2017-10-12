@@ -1,13 +1,12 @@
 tosca_definitions_version: alien_dsl_2_0_0
 
 metadata:
-  template_name: kubernetes-modifier-types
+  template_name: org.alien4cloud.kubernetes.api
   template_version: 2.0.0-SNAPSHOT
   template_author: alien4cloud
 
-
 description: |
-  Kubernetes types useful for modifiers.
+  Kubernetes types that fit to K8S api, used by K8S topology modifiers and describe K8S matchable resources.
 
 imports:
   - tosca-normative-types:1.0.0-SNAPSHOT
@@ -34,11 +33,11 @@ data_types:
   #       description: |
   #         Standard object metadata.
   #     spec:
-  #       type: org.alien4cloud.extended.container.data.DeploymentSpec
+  #       type: org.alien4cloud.kubernetes.api.datatypes.DeploymentSpec
   #       description: |
   #         Specification of the desired behavior of the Deployment
 
-  org.alien4cloud.extended.container.data.ServicePort:
+  org.alien4cloud.kubernetes.api.datatypes.ServicePort:
     derived_from: tosca.datatypes.Root
     description: >
       c.f. https://v1-6.docs.kubernetes.io/docs/api-reference/v1.6/#serviceport-v1-core
@@ -67,7 +66,7 @@ data_types:
           - less_or_equal: 1
           - greater_or_equal: 65535
 
-  org.alien4cloud.extended.container.data.ServiceSpec:
+  org.alien4cloud.kubernetes.api.datatypes.ServiceSpec:
     derived_from: tosca.datatypes.Root
     description: >
       c.f. https://v1-6.docs.kubernetes.io/docs/api-reference/v1.6/#servicespec-v1-core
@@ -101,7 +100,7 @@ data_types:
         description: |
           The list of ports that are exposed by this service. More info: http://kubernetes.io/docs/user-guide/services#virtual-ips-and-service-proxies
         entry_schema:
-          type: org.alien4cloud.extended.container.data.ServicePort
+          type: org.alien4cloud.kubernetes.api.datatypes.ServicePort
       selector:
         type: map
         entry_schema:
@@ -119,7 +118,7 @@ data_types:
         constraints:
           valid_values: [ 'ExternalName', 'ClusterIP', 'NodePort', 'LoadBalancer' ]
 
-  org.alien4cloud.extended.container.data.DeploymentSpec:
+  org.alien4cloud.kubernetes.api.datatypes.DeploymentSpec:
     derived_from: tosca.datatypes.Root
     description: >
       c.f. https://kubernetes.io/docs/api-reference/v1.6/#deploymentspec-v1beta1-apps
@@ -149,7 +148,7 @@ data_types:
         description: |
           The config this deployment is rolling back to. Will be cleared after rollback is done.
       selector:
-        type: string # datetype: LabelSelector
+        type: string # datetype: org.alien4cloud.kubernetes.api.datatypes.LabelSelector
         description: |
           Label selector for pods. Existing ReplicaSets whose pods are selected by this will be the ones affected by this deployment.
       strategy:
@@ -161,8 +160,7 @@ data_types:
         description: |
           Template describes the pods that will be created.
 
-
-  org.alien4cloud.extended.container.data.PodTemplateSpec:
+  org.alien4cloud.kubernetes.api.datatypes.PodTemplateSpec:
     derived_from: tosca.datatypes.Root
     description: >
       c.f. hhttps://kubernetes.io/docs/api-reference/v1.6/#podtemplatespec-v1-core
@@ -176,12 +174,11 @@ data_types:
         description: |
           Standard object's metadata. More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#metadata
       spec:
-        type: org.alien4cloud.extended.container.data.PodSpec
+        type: org.alien4cloud.kubernetes.api.datatypes.PodSpec
         description: |
           Specification of the desired behavior of the pod. More info: http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#spec-and-status
 
-
-  org.alien4cloud.extended.container.data.PodSpec:
+  org.alien4cloud.kubernetes.api.datatypes.PodSpec:
     derived_from: tosca.datatypes.Root
     properties:
       activeDeadlineSeconds:
@@ -189,7 +186,7 @@ data_types:
         description: |
           Optional duration in seconds the pod may be active on the node relative to StartTime before the system will actively try to mark it failed and kill associated containers. Value must be a positive integer.
       affinity:
-        type: org.alien4cloud.extended.container.data.Affinity
+        type: org.alien4cloud.kubernetes.api.datatypes.Affinity
         description: |
            If specified, the pod's scheduling constraints
       automountServiceAccountToken:
@@ -225,7 +222,7 @@ data_types:
       #   description: |
       #     array  ImagePullSecrets is an optional list of references to secrets in the same namespace to use for pulling any of the images used by this PodSpec. If specified, these secrets will be passed to individual puller implementations for them to use. For example, in the case of docker, only DockerConfig type secrets are honored. More info: http://kubernetes.io/docs/user-guide/images#specifying-imagepullsecrets-on-a-pod
       initContainers:
-        type: org.alien4cloud.extended.container.data.ContainerSpec
+        type: org.alien4cloud.kubernetes.api.datatypes.ContainerSpec
         description: |
           array List of initialization containers belonging to the pod. Init containers are executed in order prior to containers being started. If any init container fails, the pod is considered to have failed and is handled according to its restartPolicy. The name for an init container or normal container must be unique among all containers. Init containers may not have Lifecycle actions, Readiness probes, or Liveness probes. The resourceRequirements of an init container are taken into account during scheduling by finding the highest request/limit for each resource type, and then using the max of of that value or the sum of the normal containers. Limits are applied to init containers in a similar fashion. Init containers cannot currently be added or removed. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/containers
       nodeName:
@@ -275,8 +272,7 @@ data_types:
       #   description: |
       #     array  List of volumes that can be mounted by containers belonging to the pod. More info: http://kubernetes.io/docs/user-guide/volumes
 
-
-  org.alien4cloud.extended.container.data.ContainerSpec:
+  org.alien4cloud.kubernetes.api.datatypes.ContainerSpec:
     derived_from: tosca.datatypes.Root
     properties:
       args:
@@ -367,7 +363,7 @@ data_types:
         description: |
           Container's working directory. If not specified, the container runtime's default will be used, which might be configured in the container image. Cannot be updated.
 
-  org.alien4cloud.extended.container.data.Affinity:
+  org.alien4cloud.kubernetes.api.datatypes.Affinity:
     derived_from: tosca.datatypes.Root
     properties:
       # nodeAffinity:
@@ -379,24 +375,23 @@ data_types:
       #   description: |
       #     Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).
       podAntiAffinity:
-        type: org.alien4cloud.extended.container.data.PodAntiAffinity
+        type: org.alien4cloud.kubernetes.api.datatypes.PodAntiAffinity
         description: |
           Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).
 
-
-  org.alien4cloud.extended.container.data.PodAntiAffinity:
+  org.alien4cloud.kubernetes.api.datatypes.PodAntiAffinity:
     derived_from: tosca.datatypes.Root
     properties:
       preferredDuringSchedulingIgnoredDuringExecution:
         type: list
         entry_schema:
-          type: WeightedPodAffinityTerm
+          type: org.alien4cloud.kubernetes.api.datatypes.WeightedPodAffinityTerm
 
-  WeightedPodAffinityTerm:
+  org.alien4cloud.kubernetes.api.datatypes.WeightedPodAffinityTerm:
     derived_from: tosca.datatypes.Root
     properties:
       podAffinityTerm:
-        type: PodAffinityTerm
+        type: org.alien4cloud.kubernetes.api.datatypes.PodAffinityTerm
         description: |
           A node selector term, associated with the corresponding weight.
       weight:
@@ -404,26 +399,25 @@ data_types:
         description: |
           Weight associated with matching the corresponding nodeSelectorTerm, in the range 1-100.
 
-
-  PodAffinityTerm:
+  org.alien4cloud.kubernetes.api.datatypes.PodAffinityTerm:
     derived_from: tosca.datatypes.Root
     properties:
       labelSelector:
-        type: LabelSelector
+        type: org.alien4cloud.kubernetes.api.datatypes.LabelSelector
         description: |
           A label query over a set of resources, in this case pods.
       namespaces:
         type: list
         description: |
-          namespaces specifies which namespaces the labelSelector applies to (matches against); nil list means "this pod's namespace," empty list means "all namespaces" The json tag here is not "omitempty" since we need to distinguish nil and empty. See https://golang.org/pkg/encoding/json/#Marshal for more details.
+          namespaces specifies which namespaces the org.alien4cloud.kubernetes.api.datatypes.LabelSelector applies to (matches against); nil list means "this pod's namespace," empty list means "all namespaces" The json tag here is not "omitempty" since we need to distinguish nil and empty. See https://golang.org/pkg/encoding/json/#Marshal for more details.
         entry_schema:
           type: string
       topologyKey:
         type: string
         description: |
-          This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. For PreferredDuringScheduling pod anti-affinity, empty topologyKey is interpreted as "all topologies" ("all topologies" here means all the topologyKeys indicated by scheduler command-line argument --failure-domains); for affinity and for RequiredDuringScheduling pod anti-affinity, empty topologyKey is not allowed.
+          This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the org.alien4cloud.kubernetes.api.datatypes.LabelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. For PreferredDuringScheduling pod anti-affinity, empty topologyKey is interpreted as "all topologies" ("all topologies" here means all the topologyKeys indicated by scheduler command-line argument --failure-domains); for affinity and for RequiredDuringScheduling pod anti-affinity, empty topologyKey is not allowed.
 
-  LabelSelector:
+  org.alien4cloud.kubernetes.api.datatypes.LabelSelector:
     derived_from: tosca.datatypes.Root
     properties:
       matchExpressions:
@@ -431,13 +425,13 @@ data_types:
         description: |
           matchExpressions is a list of label selector requirements. The requirements are ANDed.
         entry_schema:
-          type: LabelSelectorRequirement
+          type: org.alien4cloud.kubernetes.api.datatypes.org.alien4cloud.kubernetes.api.datatypes.LabelSelectorRequirement
       # matchLabels:
       #   type: object
       #   description: |
       #     matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
-  LabelSelectorRequirement:
+  org.alien4cloud.kubernetes.api.datatypes.org.alien4cloud.kubernetes.api.datatypes.LabelSelectorRequirement:
     derived_from: tosca.datatypes.Root
     properties:
       key:
@@ -455,7 +449,7 @@ data_types:
         entry_schema:
           type: string
 
-  org.alien4cloud.extended.container.data.HorizontalPodAutoscalerScaleTargetRef:
+  org.alien4cloud.kubernetes.api.datatypes.autoscaler.HorizontalPodAutoscalerScaleTargetRef:
     derived_from: tosca.datatypes.Root
     properties:
       apiVersion:
@@ -465,7 +459,7 @@ data_types:
       name:
         type: string
 
-  org.alien4cloud.extended.container.data.autoscaler.Metric:
+  org.alien4cloud.kubernetes.api.datatypes.autoscaler.Metric:
     derived_from: tosca.datatypes.Root
     properties:
       type:
@@ -473,7 +467,7 @@ data_types:
         constraints:
           - valid_values: [Resource, Pods, Object]
 
-  org.alien4cloud.extended.container.data.autoscaler.MetricResourceResource:
+  org.alien4cloud.kubernetes.api.datatypes.autoscaler.MetricResourceResource:
     derived_from: tosca.datatypes.Root
     properties:
       name:
@@ -481,8 +475,8 @@ data_types:
       targetAverageUtilization:
         type: integer
 
-  org.alien4cloud.extended.container.data.autoscaler.MetricResource:
-    derived_from: org.alien4cloud.extended.container.data.autoscaler.Metric
+  org.alien4cloud.kubernetes.api.datatypes.autoscaler.MetricResource:
+    derived_from: org.alien4cloud.kubernetes.api.datatypes.autoscaler.Metric
     properties:
       type:
         type: string
@@ -490,13 +484,13 @@ data_types:
         constraints:
           - equal: Resource
       resource:
-        type: org.alien4cloud.extended.container.data.autoscaler.MetricResourceResource
+        type: org.alien4cloud.kubernetes.api.datatypes.autoscaler.MetricResourceResource
 
-  org.alien4cloud.extended.container.data.HorizontalPodAutoscalerSpec:
+  org.alien4cloud.kubernetes.api.datatypes.autoscaler.HorizontalPodAutoscalerSpec:
     derived_from: tosca.datatypes.Root
     properties:
       scaleTargetRef:
-        type: org.alien4cloud.extended.container.data.HorizontalPodAutoscalerScaleTargetRef
+        type: org.alien4cloud.kubernetes.api.datatypes.autoscaler.HorizontalPodAutoscalerScaleTargetRef
       minReplicas:
         type: integer
       maxReplicas:
@@ -505,18 +499,18 @@ data_types:
       metrics_ressources:
         type: list
         entry_schema:
-          type: org.alien4cloud.extended.container.data.autoscaler.MetricResource
+          type: org.alien4cloud.kubernetes.api.datatypes.autoscaler.MetricResource
       # 'metrics_ressources' & 'metrics_pod' should finally be merged in a 'metrics' list
       # metrics_pod:
       #   type: list
       #   entry_schema:
-      #     type: org.alien4cloud.extended.container.data.autoscaler.MetricPod
+      #     type: org.alien4cloud.kubernetes.api.datatypes.autoscaler.MetricPod
 
 node_types:
 
   # HOWTO: How about relationships and capabilities ?
 
-  org.alien4cloud.extended.container.types.kubernetes.Base:
+  org.alien4cloud.kubernetes.api.types.Base:
     abstract: true
     derived_from: tosca.nodes.Root
     description: |
@@ -537,8 +531,7 @@ node_types:
         description: |
           Standard object metadata.
 
-
-  org.alien4cloud.extended.container.types.kubernetes.volume.Base:
+  org.alien4cloud.kubernetes.api.types.volume.VolumeBase:
     abstract: true
     derived_from: tosca.nodes.Root
     description: |
@@ -556,8 +549,8 @@ node_types:
       name:
         type: string
 
-  org.alien4cloud.extended.container.types.kubernetes.volume.PersistentVolumeClaimVolumeSource:
-    derived_from: org.alien4cloud.extended.container.types.kubernetes.volume.Base
+  org.alien4cloud.kubernetes.api.types.volume.PersistentVolumeClaimVolumeSource:
+    derived_from: org.alien4cloud.kubernetes.api.types.volume.VolumeBase
     properties:
       claimName:
         type: string
@@ -569,16 +562,16 @@ node_types:
           Will force the ReadOnly setting in VolumeMounts. Default false.
         default: false
 
-  org.alien4cloud.extended.container.types.kubernetes.volume.HostPathVolumeSource:
-    derived_from: org.alien4cloud.extended.container.types.kubernetes.volume.Base
+  org.alien4cloud.kubernetes.api.types.volume.HostPathVolumeSource:
+    derived_from: org.alien4cloud.kubernetes.api.types.volume.VolumeBase
     properties:
       path:
         type: string
         description: |
           Path of the directory on the host. More info: http://kubernetes.io/docs/user-guide/volumes#hostpath
 
-  org.alien4cloud.extended.container.types.kubernetes.volume.AWSElasticBlockStoreVolumeSource:
-    derived_from: org.alien4cloud.extended.container.types.kubernetes.volume.Base
+  org.alien4cloud.kubernetes.api.types.volume.AWSElasticBlockStoreVolumeSource:
+    derived_from: org.alien4cloud.kubernetes.api.types.volume.VolumeBase
     properties:
       fsType:
         type: string
@@ -598,12 +591,12 @@ node_types:
         description: |
           Unique ID of the persistent disk resource in AWS (Amazon EBS volume). More info: http://kubernetes.io/docs/user-guide/volumes#awselasticblockstore
 
-  org.alien4cloud.extended.container.types.kubernetes.Service:
-    derived_from: org.alien4cloud.extended.container.types.kubernetes.abstract.Service
+  org.alien4cloud.kubernetes.api.types.Service:
+    derived_from: org.alien4cloud.kubernetes.api.types.AbstractService
 
-  org.alien4cloud.extended.container.types.kubernetes.abstract.Service:
+  org.alien4cloud.kubernetes.api.types.AbstractService:
     abstract: true
-    derived_from: org.alien4cloud.extended.container.types.kubernetes.Base
+    derived_from: org.alien4cloud.kubernetes.api.types.Base
     description: >
       Represent a kubernetes Service
     capabilities:
@@ -625,15 +618,14 @@ node_types:
         constraints:
           - equal: Service
       spec:
-        type: org.alien4cloud.extended.container.data.ServiceSpec
+        type: org.alien4cloud.kubernetes.api.datatypes.ServiceSpec
 
+  org.alien4cloud.kubernetes.api.types.Deployment:
+    derived_from: org.alien4cloud.kubernetes.api.types.AbstractDeployment
 
-  org.alien4cloud.extended.container.types.kubernetes.Deployment:
-    derived_from: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
-
-  org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment:
+  org.alien4cloud.kubernetes.api.types.AbstractDeployment:
     abstract: true
-    derived_from: org.alien4cloud.extended.container.types.kubernetes.Base
+    derived_from: org.alien4cloud.kubernetes.api.types.Base
     description: >
       Represent a kubernetes Deployment
     capabilities:
@@ -654,10 +646,10 @@ node_types:
         constraints:
           - equal: Deployment
       spec:
-        type: org.alien4cloud.extended.container.data.DeploymentSpec
+        type: org.alien4cloud.kubernetes.api.datatypes.DeploymentSpec
 
-  org.alien4cloud.extended.container.types.kubernetes.HorizontalPodAutoscaler:
-    derived_from: org.alien4cloud.extended.container.types.kubernetes.Base
+  org.alien4cloud.kubernetes.api.types.HorizontalPodAutoscaler:
+    derived_from: org.alien4cloud.kubernetes.api.types.Base
     description: >
       A kubernetes HorizontalPodAutoscaler object
     properties:
@@ -672,21 +664,21 @@ node_types:
         constraints:
           - equal: HorizontalPodAutoscaler
       spec:
-        type: org.alien4cloud.extended.container.data.HorizontalPodAutoscalerSpec
+        type: org.alien4cloud.kubernetes.api.datatypes.autoscaler.HorizontalPodAutoscalerSpec
 
-  org.alien4cloud.extended.container.types.kubernetes.Container:
-    derived_from: org.alien4cloud.extended.container.types.kubernetes.abstract.Container
+  org.alien4cloud.kubernetes.api.types.Container:
+    derived_from: org.alien4cloud.kubernetes.api.types.AbstractContainer
 
-  org.alien4cloud.extended.container.types.kubernetes.abstract.Container:
+  org.alien4cloud.kubernetes.api.types.AbstractContainer:
     abstract: true
     derived_from: org.alien4cloud.extended.container.types.ContainerRuntime
     description: >
       Represent a kubernetes ContainerSpec.
     properties:
       container:
-        type: org.alien4cloud.extended.container.data.ContainerSpec
+        type: org.alien4cloud.kubernetes.api.datatypes.ContainerSpec
 
-  org.alien4cloud.extended.container.kubernetes.resource.Base:
+  org.alien4cloud.kubernetes.api.types.BaseResource:
     abstract: true
     derived_from: tosca.nodes.Root
     description: >
@@ -697,9 +689,9 @@ node_types:
           file: kubernetes/deployment.yaml
           description: A kubernetes file
 
-  org.alien4cloud.extended.container.kubernetes.resource.Deployment:
+  org.alien4cloud.kubernetes.api.types.DeploymentResource:
     abstract: true
-    derived_from: org.alien4cloud.extended.container.kubernetes.resource.Base
+    derived_from: org.alien4cloud.kubernetes.api.types.BaseResource
     interfaces:
       Standard:
         create:
@@ -709,9 +701,9 @@ node_types:
             - Deploy the deployment onto kubernets
             - Export some informations to expose it as attributes ?
 
-  org.alien4cloud.extended.container.kubernetes.resource.Service:
+  org.alien4cloud.kubernetes.api.types.ServiceResource:
     abstract: true
-    derived_from: org.alien4cloud.extended.container.kubernetes.resource.Base
+    derived_from: org.alien4cloud.kubernetes.api.types.BaseResource
     attributes:
       ip_address: { get_operation_output: [SELF, Standard, create, IP_ADDRESS] }
       port: { get_operation_output: [SELF, Standard, create, PORT] }
@@ -723,16 +715,15 @@ node_types:
             - Deploy the service onto kubernets
             - Export the service ip_address and port to expose it as attributes
 
-
 policy_types:
-  org.alien4cloud.extended.container.policy.kubernetes.AntiAffinityLabel:
+  org.alien4cloud.kubernetes.api.policies.AntiAffinityLabel:
     derived_from: org.alien4cloud.policies.AntiAffinity
     description: >
       c.f. https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 
     # properties:
     #   affinity:
-    #     type: org.alien4cloud.extended.container.data.PodAntiAffinity
+    #     type: org.alien4cloud.kubernetes.api.datatypes.PodAntiAffinity
 
 #
 #-------------------------------------------------
@@ -747,7 +738,7 @@ policy_types:
 #   affinity:
 #     podAffinity:
 #       requiredDuringSchedulingIgnoredDuringExecution:
-#       - labelSelector:
+#       - org.alien4cloud.kubernetes.api.datatypes.LabelSelector:
 #           matchExpressions:
 #           - key: security
 #             operator: In
@@ -758,7 +749,7 @@ policy_types:
 #       preferredDuringSchedulingIgnoredDuringExecution:
 #       - weight: 100
 #         podAffinityTerm:
-#           labelSelector:
+#           org.alien4cloud.kubernetes.api.datatypes.LabelSelector:
 #             matchExpressions:
 #             - key: security
 #               operator: In
@@ -769,10 +760,10 @@ policy_types:
 #   - name: with-pod-affinity
 #     image: gcr.io/google_containers/pause:2.0
 #
-  org.alien4cloud.extended.container.policy.kubernetes.AutoscalingPolicy:
+  org.alien4cloud.kubernetes.api.policies.AutoscalingPolicy:
     derived_from: tosca.policies.Scaling
     description: >
       c.f. https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
     properties:
       spec:
-        type: org.alien4cloud.extended.container.data.HorizontalPodAutoscalerSpec
+        type: org.alien4cloud.kubernetes.api.datatypes.autoscaler.HorizontalPodAutoscalerSpec
