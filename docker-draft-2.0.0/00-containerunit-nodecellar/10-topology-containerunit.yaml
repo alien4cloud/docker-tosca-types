@@ -7,20 +7,24 @@ metadata:
 
 
 description: |
-  The topology after inputs injection
+  A nodecellar topology template composing of:
+    - 1 ContainerUnit
+    - 1 Nodecellar nodes hosted_on the ContainerUnit
+    - 1 MongoDBs having a relationship with the Nodecellar node.
 
 imports:
   - docker-types:2.0.0-SNAPSHOT
   - tosca-normative-types:1.0.0-SNAPSHOT
   - docker-draft.sandbox.samples:2.0.0-SNAPSHOT
 
-repositories:
-  docker:
-    url: https://hub.docker.com/
-    type: http
-
-
 topology_template:
+
+  inputs:
+
+    cpu_share:
+        type: float
+        required: true
+        default: 1.0
 
   node_templates:
 
@@ -41,7 +45,7 @@ topology_template:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
         docker_env_vars:
           LOG_LEVEL: "DEBUG"
-        cpu_share: 1.0
+        cpu_share: { get_input: cpu_share }
         mem_share: "1024 MB"
       requirements:
         - host:
@@ -67,51 +71,20 @@ topology_template:
             max_instances: 1
             default_instances: 1
 
-    Nodecellar_2:
-      type: alien.nodes.Application.Docker.Nodecellar
-      properties:
-        docker_run_cmd: "cd /nodecellar && nodejs server.js"
-        docker_env_vars:
-          LOG_LEVEL: "DEBUG"
-        cpu_share: 1.0
-        mem_share: "1024 MB"
-      requirements:
-        - host:
-            node: Nodecellar_Runtime
-            capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
-            relationship: tosca.relationships.HostedOn
-        - mongo_db:
-            node: Mongo_2
-            capability: alien.capabilities.endpoint.docker.Mongo
-            relationship: tosca.relationships.ConnectsTo
-      capabilities:
-        nodecellar_app:
-          properties:
-            docker_bridge_port_mapping: 0
-            port: 4000
-            protocol: tcp
-            secure: false
-            network_name: PRIVATE
-            initiator: source
-        scalable:
-          properties:
-            min_instances: 1
-            max_instances: 1
-            default_instances: 1
-
     Mongo_Runtime:
       type: org.alien4cloud.extended.container.types.ContainerRuntime
 
     Mongo:
       type: alien.nodes.Application.Docker.Mongo
       properties:
-        cpu_share: 1.0
+        cpu_share: { get_input: cpu_share }
         mem_share: "512 MB"
       capabilities:
         mongo_db:
           properties:
             docker_bridge_port_mapping: 0
             port: 27017
+            api_version: v1
             protocol: tcp
             secure: false
             network_name: PRIVATE
@@ -126,39 +99,3 @@ topology_template:
             node: Mongo_Runtime
             capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
             relationship: tosca.relationships.HostedOn
-
-    Mongo_2_Runtime:
-      type: org.alien4cloud.extended.container.types.ContainerRuntime
-
-    Mongo_2:
-      type: alien.nodes.Application.Docker.Mongo
-      properties:
-        cpu_share: 1.0
-        mem_share: "512 MB"
-      capabilities:
-        mongo_db:
-          properties:
-            docker_bridge_port_mapping: 0
-            port: 27017
-            protocol: tcp
-            secure: false
-            network_name: PRIVATE
-            initiator: source
-        scalable:
-          properties:
-            min_instances: 1
-            max_instances: 1
-            default_instances: 1
-      requirements:
-        - host:
-            node: Mongo_2_Runtime
-            capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
-            relationship: tosca.relationships.HostedOn
-
-  policies:
-    - mongo_anti_affinity:
-        type: org.alien4cloud.policies.AntiAffinity
-        description: The anti affinity policy between node 1 and 2
-        targets: [Mongo, Mongo_2]
-        properties:
-          level: host

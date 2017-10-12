@@ -229,8 +229,6 @@ topology_template:
           replicas: 1
           labels:
             anti_affinity_label: ContainerDeploymentUnit_Mongo
-        spec:
-          replicas: 1
           template:
             spec:
               affinity:

@@ -1,0 +1,216 @@
+tosca_definitions_version: alien_dsl_2_0_0
+
+metadata:
+  template_name: docker-topo-sample-nodecellar
+  template_version: 2.0.0-SNAPSHOT
+  template_author: alien4cloud
+
+
+description: |
+  The result of the nodecellar topology after the translation of ContainerUnit and Containers into Kubernetes Deployment nodes.
+
+
+imports:
+  - docker-types:2.0.0-SNAPSHOT
+  - tosca-normative-types:1.0.0-SNAPSHOT
+  - docker-draft.sandbox.samples:2.0.0-SNAPSHOT
+  - kubernetes-modifier-types:2.0.0-SNAPSHOT
+
+topology_template:
+
+  node_templates:
+
+    ContainerDeploymentUnit:
+      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment # Changed the node type
+      requirements:
+        - dependency_Mongo_Service: # Add a dependency to Mongo_Service because Nodecellar has a relationship to a Mongo endpoint
+            type_requirement: dependency
+            node: Mongo_Service
+            capability: tosca.capabilities.Node
+            relationship: tosca.relationships.DependsOn
+      capabilities:
+        scalable:
+          properties:
+            min_instances: 1
+            max_instances: 1
+            default_instances: 1
+      properties:
+        apiVersion: apps/v1beta1
+        kind: Deployment
+        metadata:
+          name: ContainerDeploymentUnit # Should generate a uniq name
+        spec:
+          replicas: 1 # Have the same value as SELF.capabilities.scalable.properties.default_instances
+
+    #------------------------------------------------------
+    # Create a new node for Kubernetes Service
+    Nodecellar_Service:
+      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      requirements:
+        - dependency:
+            node: ContainerDeploymentUnit
+            capability: tosca.capabilities.Node
+            relationship: tosca.relationships.DependsOn
+      properties:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: Nodecellar_Service # Should generate a uniq name
+        spec:
+          ports:
+            - name: Nodecellar_nodecellar_app
+              port: 3000 # Nodecellar.capabilities.nodecellar_app.properties.port
+          selector:
+            app: ContainerDeploymentUnit # podname
+          type: NodePort
+
+    # Create Nodecellar Runtime to match with kubernetes container properties
+    Nodecellar_Runtime:
+      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Container
+      requirements:
+        - host:
+            node: ContainerDeploymentUnit
+            capability: tosca.capabilities.Container.Docker
+            relationship: tosca.relationships.HostedOn
+      properties:
+        container:
+          name: Nodecellar
+          env:
+            # Merge env variables coming from properties & implementation interfaces
+            LOG_LEVEL: "DEBUG"
+            MONGO_HOST: { get_attribute: [Mongo, mongo_db, ip_address] }
+            MONGO_PORT: { get_attribute: [Mongo, mongo_db, port] }
+            MONGO_API_VERSION: { get_property: [Mongo, mongo_db, api_version] }
+            NODECELLAR_PORT: 3000 # Nodecellar.capabilities.nodecellar_app.properties.port
+          image: afraisse/nodecellar:exp
+          resources:
+            requests:
+              memory: 1024M
+              cpu: 1.0
+            limits:
+              memory: 1024M
+              cpu: 1.0
+          command: ["/bin/bash", "-c", "cd /nodecellar && nodejs server.js" ]
+          ports:
+          - containerPort: 3000 # Nodecellar.capabilities.nodecellar_app.properties.port
+    #------------------------------------------------------
+
+    Nodecellar:
+      type: alien.nodes.Application.Docker.Nodecellar
+      properties:
+        docker_run_cmd: "cd /nodecellar && nodejs server.js"
+        docker_env_vars:
+          LOG_LEVEL: "DEBUG"
+        cpu_share: 1
+        mem_share: "1024 MB"
+      requirements:
+        - host:
+            node: Nodecellar_Runtime
+            capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
+            relationship: tosca.relationships.HostedOn
+        - mongo_db:
+            node: Mongo
+            capability: alien.capabilities.endpoint.docker.Mongo
+            relationship: tosca.relationships.ConnectsTo
+      capabilities:
+        nodecellar_app:
+          properties:
+            docker_bridge_port_mapping: 0
+            port: 3000
+            protocol: tcp
+            secure: false
+            network_name: PRIVATE
+            initiator: source
+        scalable:
+          properties:
+            min_instances: 1
+            max_instances: 1
+            default_instances: 1
+
+    #------------------------------------------------------
+    # Create a new node for Kubernetes Deployment for Mongo
+    ContainerDeploymentUnit_Mongo:
+      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Deployment
+      capabilities:
+        scalable:
+          properties:
+            min_instances: 1
+            max_instances: 1
+            default_instances: 1
+      properties:
+        apiVersion: apps/v1beta1
+        kind: Deployment
+        metadata:
+          name: ContainerDeploymentUnit_Mongo # Should generate a uniq name
+        spec:
+          replicas: 1
+
+    # Create a new node for Kubernetes Service
+    Mongo_Service:
+      type: org.alien4cloud.extended.container.kubernetes.abstract.Service
+      requirements:
+        - dependency:
+            node: ContainerDeploymentUnit_Mongo
+            capability: tosca.capabilities.Node
+            relationship: tosca.relationships.DependsOn
+      properties:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: Mongo_Service # Should generate a uniq name
+        spec:
+          ports:
+            - name: Mongo_mongo_db
+              port: 27017 # Mongo.capabilities.mongo_db.properties.port
+          selector:
+            app: ContainerDeploymentUnit_Mongo # podname
+          type: NodePort
+
+    # Create Mongo_Runtime to match with kubernetes container properties
+    Mongo_Runtime:
+      type: org.alien4cloud.extended.container.types.kubernetes.abstract.Container
+      requirements:
+        - host:
+            node: ContainerDeploymentUnit_Mongo
+            capability: tosca.capabilities.Container.Docker
+            relationship: tosca.relationships.HostedOn
+      properties:
+        container:
+          name: Mongo
+          image: mongo:latest
+          resources:
+            requests:
+              memory: 512M
+              cpu: 1.0
+            limits:
+              memory: 512M
+              cpu: 1.0
+          ports:
+          - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
+    #------------------------------------------------------
+
+    Mongo:
+      type: alien.nodes.Application.Docker.Mongo
+      properties:
+        cpu_share: 1.0
+        mem_share: "512 MB"
+      capabilities:
+        mongo_db:
+          properties:
+            docker_bridge_port_mapping: 0
+            port: 27017
+            api_version: v1
+            protocol: tcp
+            secure: false
+            network_name: PRIVATE
+            initiator: source
+        scalable:
+          properties:
+            min_instances: 1
+            max_instances: 1
+            default_instances: 1
+      requirements:
+        - host:
+            node: Mongo_Runtime
+            capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
+            relationship: tosca.relationships.HostedOn
