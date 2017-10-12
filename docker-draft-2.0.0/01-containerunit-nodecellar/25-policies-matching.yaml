@@ -105,7 +105,7 @@ topology_template:
       type: alien.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
-        docker_env_vars: 
+        docker_env_vars:
           LOG_LEVEL: "DEBUG"
         cpu_share: 1
         mem_share: "1024 MB"
@@ -138,7 +138,7 @@ topology_template:
       requirements:
         - dependency:
             node: ContainerDeploymentUnit
-            capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
+            capability: tosca.capabilities.Node
             relationship: tosca.relationships.DependsOn
       properties:
         apiVersion: v1
@@ -184,7 +184,7 @@ topology_template:
       type: alien.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
-        docker_env_vars: 
+        docker_env_vars:
           LOG_LEVEL: "DEBUG"
         cpu_share: 1.0
         mem_share: "1024 MB"
@@ -290,7 +290,7 @@ topology_template:
             default_instances: 1
       requirements:
         - host:
-            node: Mongo_Runtime 
+            node: Mongo_Runtime
             capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
             relationship: tosca.relationships.HostedOn
 
@@ -370,6 +370,11 @@ topology_template:
             min_instances: 1
             max_instances: 1
             default_instances: 1
+      requirements:
+        - host:
+            node: Mongo_2_Runtime
+            capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
+            relationship: tosca.relationships.HostedOn
 
   policies:
     - mongo_anti_affinity:

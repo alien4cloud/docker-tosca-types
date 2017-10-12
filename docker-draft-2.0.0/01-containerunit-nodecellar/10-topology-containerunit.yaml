@@ -7,7 +7,7 @@ metadata:
 
 
 description: |
-  A nodecellar topology template composing of: 
+  A nodecellar topology template composing of:
     - 1 ContainerUnit
     - 2 Nodecellar nodes hosted_on the ContainerUnit
     - 2 MongoDBs having a relationship with each Nodecellar nodes.
@@ -39,17 +39,25 @@ topology_template:
     ContainerDeploymentUnit:
       type: org.alien4cloud.extended.container.types.ContainerDeploymentUnit
 
+    Nodecellar_Runtime:
+      type: org.alien4cloud.extended.container.types.ContainerRuntime
+      requirements:
+        - host:
+            node: ContainerDeploymentUnit
+            capability: tosca.capabilities.Container.Docker
+            relationship: tosca.relationships.HostedOn
+
     Nodecellar:
       type: alien.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
-        docker_env_vars: 
+        docker_env_vars:
           LOG_LEVEL: "DEBUG"
         cpu_share: { get_input: cpu_share }
         mem_share: "1024 MB"
       requirements:
         - host:
-            node: ContainerDeploymentUnit
+            node: Nodecellar_Runtime
             capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
             relationship: tosca.relationships.HostedOn
         - mongo_db:
@@ -75,7 +83,7 @@ topology_template:
       type: alien.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
-        docker_env_vars: 
+        docker_env_vars:
           LOG_LEVEL: "DEBUG"
         cpu_share: { get_input: cpu_share }
         mem_share: "1024 MB"
@@ -103,6 +111,9 @@ topology_template:
             max_instances: 1
             default_instances: 1
 
+    Mongo_Runtime:
+      type: org.alien4cloud.extended.container.types.ContainerRuntime
+
     Mongo:
       type: alien.nodes.Application.Docker.Mongo
       properties:
@@ -122,6 +133,14 @@ topology_template:
             min_instances: 1
             max_instances: 1
             default_instances: 1
+      requirements:
+        - host:
+            node: Mongo_Runtime
+            capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
+            relationship: tosca.relationships.HostedOn
+
+    Mongo_2_Runtime:
+      type: org.alien4cloud.extended.container.types.ContainerRuntime
 
     Mongo_2:
       type: alien.nodes.Application.Docker.Mongo
@@ -142,6 +161,11 @@ topology_template:
             min_instances: 1
             max_instances: 1
             default_instances: 1
+      requirements:
+        - host:
+            node: Mongo_2_Runtime
+            capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
+            relationship: tosca.relationships.HostedOn
 
   policies:
     - mongo_anti_affinity:
