@@ -18,6 +18,24 @@ artifact_types:
     derived_from: tosca.artifacts.Deployment.Image
 
 node_types:
+
+  org.alien4cloud.extended.container.types.ContainerRuntime:
+    abstract: true
+    derived_from: tosca.nodes.Root
+    description: >
+      Can host containerized applications. A ContainerRuntime represents the container itself, while
+      DockerContainer is the contanerized application.
+    capabilities:
+      host: org.alien4cloud.extended.container.capabilities.ApplicationHost
+      # scalable on this or on DockerContainer ?
+      # scalable: tosca.capabilities.Scalable
+    requirements:
+      - host:
+          # a ContainerRuntime can be hosted on a ContainerDeploymentUnit
+          capability: tosca.capabilities.Container.Docker
+          relationship: tosca.relationships.HostedOn
+          occurrences: [0, 1]
+
   org.alien4cloud.extended.container.types.ContainerDeploymentUnit:
     abstract: true
     derived_from: tosca.nodes.Root
@@ -27,6 +45,7 @@ node_types:
       host: tosca.capabilities.Container.Docker
       scalable: tosca.capabilities.Scalable
 
+  # rename as ContainerApplication ?
   tosca.nodes.Container.Application.DockerContainer:
     abstract: true
     derived_from: tosca.nodes.Container.Application
@@ -81,8 +100,9 @@ node_types:
       scalable: tosca.capabilities.Scalable
     requirements:
       - host:
-          capability: tosca.capabilities.Container.Docker
+          capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
           relationship: tosca.relationships.HostedOn
+          # will be [1, 1] since it's not an option
           occurrences: [0, 1]
 
   alien.nodes.DockerExtVolume:
@@ -116,6 +136,11 @@ capability_types:
     derived_from: tosca.capabilities.Container
     description: >
       The capacity to host and run Docker containers.
+
+  org.alien4cloud.extended.container.capabilities.ApplicationHost:
+    derived_from: tosca.capabilities.Container
+    description: >
+      The capacity to host and run containerized application image.
 
   alien.capabilities.endpoint.Docker:
     derived_from: tosca.capabilities.Endpoint
