@@ -14,3 +14,13 @@ node-matching (static)
 matched-node-setup ( static - injection des props config par user)
  - post-matched-node-setup
 topology-validation (static)
+
+
+The K8S location modifier will:
+  - replace all org.alien4cloud.extended.container.types.ContainerRuntime by org.alien4cloud.extended.container.types.kubernetes.abstract.Container
+    - fill it's properties
+  - replace all org.alien4cloud.extended.container.types.ContainerDeploymentUnit by org.alien4cloud.extended.container.kubernetes.resource.Deployment
+  - wrap all orphean org.alien4cloud.extended.container.types.ContainerRuntime into a org.alien4cloud.extended.container.kubernetes.resource.Deployment
+  - for each container capability of type endpoint, add a org.alien4cloud.extended.container.kubernetes.resource.Service and weave depends_on relationships
+  - analyse relationships between containers : when a relationship exist between 2 container, if not exist a relationship of type depends_on should be added between surrounding Deployment objects
+    - if a relationship already exist between 2 Deployments but in the other way, throw an exception
