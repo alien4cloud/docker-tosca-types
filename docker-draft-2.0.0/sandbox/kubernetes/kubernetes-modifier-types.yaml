@@ -667,25 +667,12 @@ org.alien4cloud.extended.container.types.kubernetes.volume.AWSElasticBlockStoreV
 
   org.alien4cloud.extended.container.types.kubernetes.abstract.Container:
     abstract: true
-    derived_from: tosca.nodes.Root
+    derived_from: org.alien4cloud.extended.container.types.ContainerRuntime
     description: >
       Represent a kubernetes ContainerSpec.
-    requirements:
-      - host:
-          capability: tosca.capabilities.Container
-          node: org.alien4cloud.extended.container.types.kubernetes.Deployment
-          relationship: tosca.relationships.HostedOn
-      - docker_endpoint:
-          capability: tosca.capabilities.Endpoint
-          relationship: tosca.relationships.ConnectsTo
-          occurrences: [0, UNBOUND]
-    capabilities:
-      attach: alien.capabilities.DockerVolumeAttachment
-      docker_endpoint: tosca.capabilities.Endpoint
     properties:
       container:
         type: org.alien4cloud.extended.container.data.ContainerSpec
-
 
   org.alien4cloud.extended.container.kubernetes.resource.Base:
     abstract: true

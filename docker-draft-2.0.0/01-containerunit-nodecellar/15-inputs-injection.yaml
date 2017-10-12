@@ -38,7 +38,7 @@ topology_template:
       requirements:
         - host:
             node: ContainerDeploymentUnit
-            capability: tosca.capabilities.Container.Docker
+            capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
             relationship: tosca.relationships.HostedOn
         - mongo_db:
             node: Mongo
@@ -70,7 +70,7 @@ topology_template:
       requirements:
         - host:
             node: ContainerDeploymentUnit
-            capability: tosca.capabilities.Container.Docker
+            capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
             relationship: tosca.relationships.HostedOn
         - mongo_db:
             node: Mongo_2

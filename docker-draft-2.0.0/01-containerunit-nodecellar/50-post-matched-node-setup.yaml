@@ -27,18 +27,23 @@ topology_template:
 
     ContainerDeploymentUnit:
       type: org.alien4cloud.extended.container.kubernetes.resource.Deployment
-      # Missing capa & req
       requirements:
-        - dependency:
+        - dependency_Mongo_Service:
             type_requirement: dependency
             node: Mongo_Service
             capability: tosca.capabilities.Node
             relationship: tosca.relationships.DependsOn
-        - dependency_2:
+        - dependency_Mongo_2_Service:
             type_requirement: dependency
             node: Mongo_2_Service
             capability: tosca.capabilities.Node
             relationship: tosca.relationships.DependsOn
+      capabilities:
+        scalable:
+          properties:
+            min_instances: 1
+            max_instances: 1
+            default_instances: 1
       artifacts:
         type: tosca.artifacts.File
         file: kubernetes/ContainerDeploymentUnit.yaml
@@ -47,10 +52,10 @@ topology_template:
       Standard:
         create:
           inputs:
-            DEPENDENCY_IP_ADDRESS: { get_attribute: [ SELF, dependency, ip_address] }
-            DEPENDENCY_PORT: { get_attribute: [ SELF, dependency, port] }
-            DEPENDENCY_2_IP_ADDRESS: { get_attribute: [ SELF, dependency, ip_address] }
-            DEPENDENCY_2_PORT: { get_attribute: [ SELF, dependency, port] }
+            K8S_DEPENDENCY_IP_ADDRESS: { get_attribute: [ SELF, dependency, ip_address] }
+            K8S_DEPENDENCY_PORT: { get_attribute: [ SELF, dependency, port] }
+            K8S_DEPENDENCY_2_IP_ADDRESS: { get_attribute: [ SELF, dependency, ip_address] }
+            K8S_DEPENDENCY_2_PORT: { get_attribute: [ SELF, dependency, port] }
           implementation: kubectl_service_wrapper.sh
           description: |
             - Deploy the service onto kubernets
@@ -58,7 +63,6 @@ topology_template:
 
     Nodecellar_Service:
       type: org.alien4cloud.extended.container.kubernetes.resource.Service
-      # Missing capa & req
       requirements:
         - dependency:
             type_requirement: dependency
@@ -72,7 +76,6 @@ topology_template:
 
     Nodecellar_2_Service:
       type: org.alien4cloud.extended.container.kubernetes.resource.Service
-      # Missing capa & req
       requirements:
         - dependency:
             type_requirement: dependency
@@ -86,7 +89,12 @@ topology_template:
 
     ContainerDeploymentUnit_Mongo:
       type: org.alien4cloud.extended.container.kubernetes.resource.Deployment
-      # Missing capa & req
+      capabilities:
+        scalable:
+          properties:
+            min_instances: 1
+            max_instances: 1
+            default_instances: 1
       artifacts:
         type: tosca.artifacts.File
         file: kubernetes/ContainerDeploymentUnit_Mongo.yaml
@@ -94,7 +102,6 @@ topology_template:
 
     Mongo_Service:
       type: org.alien4cloud.extended.container.kubernetes.resource.Service
-      # Missing capa & req
       requirements:
         - dependency:
             type_requirement: dependency
@@ -108,7 +115,6 @@ topology_template:
 
     ContainerDeploymentUnit_Mongo_2:
       type: org.alien4cloud.extended.container.kubernetes.resource.Deployment
-      # Missing capa & req
       artifacts:
         type: tosca.artifacts.File
         file: kubernetes/ContainerDeploymentUnit_Mongo_2.yaml
@@ -116,7 +122,6 @@ topology_template:
 
     Mongo_2_Service:
       type: org.alien4cloud.extended.container.kubernetes.resource.Service
-      # Missing capa & req
       requirements:
         - dependency:
             type_requirement: dependency
