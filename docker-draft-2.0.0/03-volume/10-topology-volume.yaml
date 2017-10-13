@@ -21,7 +21,7 @@ topology_template:
   node_templates:
 
     DockerExtVolume:
-      type: alien.nodes.DockerExtVolume
+      type: org.alien4cloud.nodes.DockerExtVolume
       requirements:
         - host:
             node: ContainerDeploymentUnit
@@ -29,20 +29,20 @@ topology_template:
             relationship: tosca.relationships.HostedOn
         - attachment:
             node: Nodecellar
-            capability: alien.capabilities.DockerVolumeAttachment
-            relationship: alien.relationships.MountDockerVolume
+            capability: org.alien4cloud.capabilities.DockerVolumeAttachment
+            relationship: org.alien4cloud.relationships.MountDockerVolume
             properties:
               container_path: /tmp/var
         - attachment_mongo:
             type_requirement: attachment
             node: Mongo
-            capability: alien.capabilities.DockerVolumeAttachment
-            relationship: alien.relationships.MountDockerVolume
+            capability: org.alien4cloud.capabilities.DockerVolumeAttachment
+            relationship: org.alien4cloud.relationships.MountDockerVolume
             properties:
               container_path: /tmp/var
 
     Nodecellar:
-      type: alien.nodes.Application.Docker.Nodecellar
+      type: org.alien4cloud.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
         docker_env_vars:
@@ -56,11 +56,11 @@ topology_template:
             relationship: tosca.relationships.HostedOn
         - mongo_db:
             node: Mongo
-            capability: alien.capabilities.endpoint.docker.Mongo
+            capability: org.alien4cloud.capabilities.endpoint.docker.Mongo
             relationship: tosca.relationships.ConnectsTo
 
     Mongo:
-      type: alien.nodes.Application.Docker.Mongo
+      type: org.alien4cloud.nodes.Application.Docker.Mongo
       properties:
         cpu_share: 1.0
         mem_share: "512 MB"

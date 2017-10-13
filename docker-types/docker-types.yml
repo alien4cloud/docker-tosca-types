@@ -96,16 +96,16 @@ node_types:
         description: >
           Reflects the external endpoint assigned to this container.
     capabilities:
-      attach: alien.capabilities.DockerVolumeAttachment
+      attach: org.alien4cloud.capabilities.DockerVolumeAttachment
       scalable: tosca.capabilities.Scalable
     requirements:
       - host:
           capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
-          relationship: tosca.relationships.HostedOn
+          relationship: org.alien4cloud.extended.container.relationships.HostedOnContainerRuntime
           # will be [1, 1] since it's not an option
-          occurrences: [0, 1]
+          occurrences: [1, 1]
 
-  alien.nodes.DockerExtVolume:
+  org.alien4cloud.nodes.DockerExtVolume:
     abstract: true
     derived_from: tosca.nodes.BlockStorage
     tags:
@@ -121,8 +121,8 @@ node_types:
     #     default: ""
     requirements:
       - attachment:
-          capability: alien.capabilities.DockerVolumeAttachment
-          relationship: alien.relationships.MountDockerVolume
+          capability: org.alien4cloud.capabilities.DockerVolumeAttachment
+          relationship: org.alien4cloud.relationships.MountDockerVolume
           occurrences: [1, unbounded]
       - host:
           capability: tosca.capabilities.Container.Docker
@@ -142,7 +142,7 @@ capability_types:
     description: >
       The capacity to host and run containerized application image.
 
-  alien.capabilities.endpoint.Docker:
+  org.alien4cloud.capabilities.endpoint.Docker:
     derived_from: tosca.capabilities.Endpoint
     description: >
       Endpoint generic capability for a Docker container, allowing implementation
@@ -153,18 +153,22 @@ capability_types:
         description: Port used to bridge to the container's endpoint.
         default: 0
 
-  alien.capabilities.DockerVolumeAttachment:
+  org.alien4cloud.capabilities.DockerVolumeAttachment:
     derived_from: tosca.capabilities.Attachment
     description: >
       Capability to mount a Docker volume
-    valid_source_types: [ alien.nodes.DockerExtVolume ]
+    valid_source_types: [ org.alien4cloud.nodes.DockerExtVolume ]
 
 
 relationship_types:
 
-  alien.relationships.MountDockerVolume:
+  org.alien4cloud.extended.container.relationships.HostedOnContainerRuntime:
+    derived_from: tosca.relationships.HostedOn
+    valid_target_types: [ org.alien4cloud.extended.container.capabilities.ApplicationHost ]
+
+  org.alien4cloud.relationships.MountDockerVolume:
     derived_from: tosca.relationships.AttachTo
-    valid_target_types: [ alien.capabilities.DockerVolumeAttachment ]
+    valid_target_types: [ org.alien4cloud.capabilities.DockerVolumeAttachment ]
     properties:
       container_path:
         type: string

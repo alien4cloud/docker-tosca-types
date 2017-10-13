@@ -1,7 +1,7 @@
 tosca_definitions_version: alien_dsl_2_0_0
 
 metadata:
-  template_name: docker-topo-sample-nodecellar
+  template_name: 00-20-pre-policies-matching
   template_version: 2.0.0-SNAPSHOT
   template_author: alien4cloud
 
@@ -62,41 +62,42 @@ topology_template:
               port: 3000 # Nodecellar.capabilities.nodecellar_app.properties.port
           selector:
             app: ContainerDeploymentUnit # podname
-          type: NodePort
+          service_type: NodePort
 
     # Create Nodecellar Runtime to match with kubernetes container properties
     Nodecellar_Runtime:
       type: org.alien4cloud.kubernetes.api.types.AbstractContainer
       requirements:
-        - host:
+        - hostedOnNodecellarContainerDeploymentUnitHost:
+            type_requirement: host
             node: ContainerDeploymentUnit
             capability: tosca.capabilities.Container.Docker
             relationship: tosca.relationships.HostedOn
       properties:
         container:
           name: Nodecellar
-          env:
-            # Merge env variables coming from properties & implementation interfaces
-            LOG_LEVEL: "DEBUG"
-            MONGO_HOST: { get_attribute: [Mongo, mongo_db, ip_address] }
-            MONGO_PORT: { get_attribute: [Mongo, mongo_db, port] }
-            MONGO_API_VERSION: { get_property: [Mongo, mongo_db, api_version] }
-            NODECELLAR_PORT: 3000 # Nodecellar.capabilities.nodecellar_app.properties.port
+          # env:
+          #   # Merge env variables coming from properties & implementation interfaces
+          #   LOG_LEVEL: "DEBUG"
+          #   MONGO_HOST: { get_attribute: [Mongo, mongo_db, ip_address] }
+          #   MONGO_PORT: { get_attribute: [Mongo, mongo_db, port] }
+          #   MONGO_API_VERSION: "v1"
+          #   NODECELLAR_PORT: 3000 # Nodecellar.capabilities.nodecellar_app.properties.port
           image: afraisse/nodecellar:exp
           resources:
             requests:
-              memory: 1024M
+              memory: "1024 MB"
               cpu: 1.0
             limits:
-              memory: 1024M
+              memory: "1024 MB"
               cpu: 1.0
           command: ["/bin/bash", "-c", "cd /nodecellar && nodejs server.js" ]
           ports:
-          - containerPort: 3000 # Nodecellar.capabilities.nodecellar_app.properties.port
+            containerPort: 3000 # Nodecellar.capabilities.nodecellar_app.properties.port
     #------------------------------------------------------
 
     Nodecellar:
-      type: alien.nodes.Application.Docker.Nodecellar
+      type: org.alien4cloud.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
         docker_env_vars:
@@ -107,10 +108,10 @@ topology_template:
         - host:
             node: Nodecellar_Runtime
             capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
-            relationship: tosca.relationships.HostedOn
+            relationship: org.alien4cloud.extended.container.relationships.HostedOnContainerRuntime
         - mongo_db:
             node: Mongo
-            capability: alien.capabilities.endpoint.docker.Mongo
+            capability: org.alien4cloud.capabilities.endpoint.docker.Mongo
             relationship: tosca.relationships.ConnectsTo
       capabilities:
         nodecellar_app:
@@ -162,15 +163,16 @@ topology_template:
           ports:
             - name: Mongo_mongo_db
               port: 27017 # Mongo.capabilities.mongo_db.properties.port
-          selector:
+          selector: 
             app: ContainerDeploymentUnit_Mongo # podname
-          type: NodePort
+          service_type: NodePort
 
     # Create Mongo_Runtime to match with kubernetes container properties
     Mongo_Runtime:
       type: org.alien4cloud.kubernetes.api.types.AbstractContainer
       requirements:
-        - host:
+        - hostedOn:
+            type_requirement: host
             node: ContainerDeploymentUnit_Mongo
             capability: tosca.capabilities.Container.Docker
             relationship: tosca.relationships.HostedOn
@@ -180,17 +182,17 @@ topology_template:
           image: mongo:latest
           resources:
             requests:
-              memory: 512M
+              memory: "512 MB"
               cpu: 1.0
             limits:
-              memory: 512M
+              memory: "512 MB"
               cpu: 1.0
           ports:
-          - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
+            containerPort: 27017
     #------------------------------------------------------
 
     Mongo:
-      type: alien.nodes.Application.Docker.Mongo
+      type: org.alien4cloud.nodes.Application.Docker.Mongo
       properties:
         cpu_share: 1.0
         mem_share: "512 MB"
@@ -213,4 +215,4 @@ topology_template:
         - host:
             node: Mongo_Runtime
             capability: org.alien4cloud.extended.container.capabilities.ApplicationHost
-            relationship: tosca.relationships.HostedOn
+            relationship: org.alien4cloud.extended.container.relationships.HostedOnContainerRuntime

@@ -33,15 +33,15 @@ topology_template:
         - attachment:
             type_requirement: attachment
             node: Nodecellar
-            capability: alien.capabilities.DockerVolumeAttachment
-            relationship: alien.relationships.MountDockerVolume
+            capability: org.alien4cloud.capabilities.DockerVolumeAttachment
+            relationship: org.alien4cloud.relationships.MountDockerVolume
             properties:
               container_path: /tmp/var
         - attachment_mongo:
             type_requirement: attachment
             node: Mongo
-            capability: alien.capabilities.DockerVolumeAttachment
-            relationship: alien.relationships.MountDockerVolume
+            capability: org.alien4cloud.capabilities.DockerVolumeAttachment
+            relationship: org.alien4cloud.relationships.MountDockerVolume
             properties:
               container_path: /tmp/var
 

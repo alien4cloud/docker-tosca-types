@@ -102,7 +102,7 @@ topology_template:
           - containerPort: 3000
 
     Nodecellar:
-      type: alien.nodes.Application.Docker.Nodecellar
+      type: org.alien4cloud.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
         docker_env_vars:
@@ -116,7 +116,7 @@ topology_template:
             relationship: tosca.relationships.HostedOn
         - mongo_db:
             node: Mongo
-            capability: alien.capabilities.endpoint.docker.Mongo
+            capability: org.alien4cloud.capabilities.endpoint.docker.Mongo
             relationship: tosca.relationships.ConnectsTo
       capabilities:
         nodecellar_app:
@@ -181,7 +181,7 @@ topology_template:
           - containerPort: 4000
 
     Nodecellar_2:
-      type: alien.nodes.Application.Docker.Nodecellar
+      type: org.alien4cloud.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
         docker_env_vars:
@@ -195,7 +195,7 @@ topology_template:
             relationship: tosca.relationships.HostedOn
         - mongo_db:
             node: Mongo_2
-            capability: alien.capabilities.endpoint.docker.Mongo
+            capability: org.alien4cloud.capabilities.endpoint.docker.Mongo
             relationship: tosca.relationships.ConnectsTo
       capabilities:
         nodecellar_app:
@@ -288,7 +288,7 @@ topology_template:
           - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
 
     Mongo:
-      type: alien.nodes.Application.Docker.Mongo
+      type: org.alien4cloud.nodes.Application.Docker.Mongo
       properties:
         cpu_share: 1.0
         mem_share: "512 MB"
@@ -386,7 +386,7 @@ topology_template:
           - containerPort: 27017
 
     Mongo_2:
-      type: alien.nodes.Application.Docker.Mongo
+      type: org.alien4cloud.nodes.Application.Docker.Mongo
       properties:
         cpu_share: 1.0
         mem_share: "512 MB"

@@ -1,7 +1,7 @@
 tosca_definitions_version: alien_dsl_2_0_0
 
 metadata:
-  template_name: docker-topo-sample-nodecellar
+  template_name: 00-25-policies-matching
   template_version: 2.0.0-SNAPSHOT
   template_author: alien4cloud
 
@@ -26,11 +26,6 @@ topology_template:
         - dependency_Mongo_Service:
             type_requirement: dependency
             node: Mongo_Service
-            capability: tosca.capabilities.Node
-            relationship: tosca.relationships.DependsOn
-        - dependency_Mongo_2_Service:
-            type_requirement: dependency
-            node: Mongo_2_Service
             capability: tosca.capabilities.Node
             relationship: tosca.relationships.DependsOn
       capabilities:
@@ -95,7 +90,7 @@ topology_template:
           - containerPort: 3000
 
     Nodecellar:
-      type: alien.nodes.Application.Docker.Nodecellar
+      type: org.alien4cloud.nodes.Application.Docker.Nodecellar
       properties:
         docker_run_cmd: "cd /nodecellar && nodejs server.js"
         docker_env_vars:
@@ -109,7 +104,7 @@ topology_template:
             relationship: tosca.relationships.HostedOn
         - mongo_db:
             node: Mongo
-            capability: alien.capabilities.endpoint.docker.Mongo
+            capability: org.alien4cloud.capabilities.endpoint.docker.Mongo
             relationship: tosca.relationships.ConnectsTo
       capabilities:
         nodecellar_app:
@@ -184,7 +179,7 @@ topology_template:
           - containerPort: { get_attribute: [SELF, docker_endpoint, port] }
 
     Mongo:
-      type: alien.nodes.Application.Docker.Mongo
+      type: org.alien4cloud.nodes.Application.Docker.Mongo
       properties:
         cpu_share: 1.0
         mem_share: "512 MB"
