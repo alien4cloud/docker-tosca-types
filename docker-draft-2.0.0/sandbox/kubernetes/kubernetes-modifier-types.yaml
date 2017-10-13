@@ -690,9 +690,6 @@ node_types:
     derived_from: org.alien4cloud.kubernetes.api.types.Base
     description: >
       Represent a kubernetes Service
-    capabilities:
-      docker_endpoint:
-        type: tosca.capabilities.Endpoint
     properties:
       apiVersion:
         type: string
@@ -784,6 +781,8 @@ node_types:
   org.alien4cloud.kubernetes.api.types.DeploymentResource:
     abstract: true
     derived_from: org.alien4cloud.kubernetes.api.types.BaseResource
+    capabilities:
+      scalable: tosca.capabilities.Scalable
     interfaces:
       Standard:
         create:
