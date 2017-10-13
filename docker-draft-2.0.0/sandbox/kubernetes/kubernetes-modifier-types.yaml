@@ -779,7 +779,6 @@ node_types:
           description: A kubernetes file
 
   org.alien4cloud.kubernetes.api.types.DeploymentResource:
-    abstract: true
     derived_from: org.alien4cloud.kubernetes.api.types.BaseResource
     capabilities:
       scalable: tosca.capabilities.Scalable
@@ -793,7 +792,6 @@ node_types:
             - Export some informations to expose it as attributes ?
 
   org.alien4cloud.kubernetes.api.types.ServiceResource:
-    abstract: true
     derived_from: org.alien4cloud.kubernetes.api.types.BaseResource
     attributes:
       ip_address: { get_operation_output: [SELF, Standard, create, IP_ADDRESS] }

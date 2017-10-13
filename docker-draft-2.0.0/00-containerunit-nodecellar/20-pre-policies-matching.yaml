@@ -76,13 +76,13 @@ topology_template:
       properties:
         container:
           name: Nodecellar
-          # env:
-          #   # Merge env variables coming from properties & implementation interfaces
-          #   LOG_LEVEL: "DEBUG"
-          #   MONGO_HOST: { get_attribute: [Mongo, mongo_db, ip_address] }
-          #   MONGO_PORT: { get_attribute: [Mongo, mongo_db, port] }
-          #   MONGO_API_VERSION: "v1"
-          #   NODECELLAR_PORT: 3000 # Nodecellar.capabilities.nodecellar_app.properties.port
+          env:
+            # Merge env variables coming from properties & implementation interfaces
+            LOG_LEVEL: "DEBUG"
+            # MONGO_HOST: { get_attribute: [Mongo, mongo_db, ip_address] }
+            # MONGO_PORT: { get_attribute: [Mongo, mongo_db, port] }
+            MONGO_API_VERSION: "v1"
+            NODECELLAR_PORT: 3000 # Nodecellar.capabilities.nodecellar_app.properties.port
           image: afraisse/nodecellar:exp
           resources:
             requests:
