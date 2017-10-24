@@ -32,3 +32,8 @@ Use the `admin.conf` file to query kubernetes cluster from the Cloudify's manage
 
 	kubectl --kubeconfig /some_path/admin.conf get nodes 
 
+## Misc
+
+Tested on aws, computes matched with :
+- ami-0f80e87c
+- t2.medium
