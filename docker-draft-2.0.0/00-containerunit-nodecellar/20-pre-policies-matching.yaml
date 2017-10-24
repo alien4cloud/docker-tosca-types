@@ -163,7 +163,8 @@ topology_template:
           ports:
             - name: Mongo_mongo_db
               port: 27017 # Mongo.capabilities.mongo_db.properties.port
-          selector: 
+          selector:
+            # app ? or name ?
             app: ContainerDeploymentUnit_Mongo # podname
           service_type: NodePort
 
@@ -178,7 +179,7 @@ topology_template:
             relationship: tosca.relationships.HostedOn
       properties:
         container:
-          name: Mongo
+          name: Mongo # unique name ?
           image: mongo:latest
           resources:
             requests:

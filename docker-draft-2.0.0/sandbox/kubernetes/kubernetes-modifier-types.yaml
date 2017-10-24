@@ -124,6 +124,7 @@ data_types:
         required: false
         description: |
           Supports "ClientIP" and "None". Used to maintain session affinity. Enable client IP based session affinity. Must be ClientIP or None. Defaults to None. More info: http://kubernetes.io/docs/user-guide/services#virtual-ips-and-service-proxies
+      # TODO: initally 'type'
       service_type:
         type: string
         required: false
@@ -422,11 +423,11 @@ data_types:
     properties:
       limits:
         type: org.alien4cloud.kubernetes.api.datatypes.ResourceRequest
-        description: | 
+        description: |
           Limits describes the maximum amount of compute resources allowed. More info: http://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
       requests:
         type: org.alien4cloud.kubernetes.api.datatypes.ResourceRequest
-        description: | 
+        description: |
           Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: http://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
 
   org.alien4cloud.kubernetes.api.datatypes.ResourceRequest:
@@ -544,6 +545,7 @@ data_types:
   org.alien4cloud.kubernetes.api.datatypes.autoscaler.Metric:
     derived_from: tosca.datatypes.Root
     properties:
+      # TODO initially 'type'
       metric_type:
         type: string
         required: false
@@ -562,6 +564,7 @@ data_types:
   org.alien4cloud.kubernetes.api.datatypes.autoscaler.MetricResource:
     derived_from: org.alien4cloud.kubernetes.api.datatypes.autoscaler.Metric
     properties:
+      # TODO: initially 'type'
       metric_resource_type:
         type: string
         default: Resource
@@ -595,6 +598,9 @@ data_types:
       #   entry_schema:
       #     type: org.alien4cloud.kubernetes.api.datatypes.autoscaler.MetricPod
 
+  org.alien4cloud.kubernetes.api.datatypes.DeploymentResourceDefinition:
+
+
 node_types:
 
   # HOWTO: How about relationships and capabilities ?
@@ -619,7 +625,7 @@ node_types:
         type: map
         description: |
           Standard object metadata.
-        entry_schema: 
+        entry_schema:
           type: string
 
   org.alien4cloud.kubernetes.api.types.volume.VolumeBase:
@@ -772,6 +778,15 @@ node_types:
     derived_from: tosca.nodes.Root
     description: >
       Represent a kubernetes final resource after node matching (Pod, ReplicaSet or Deployment)
+    properties:
+      resource_def:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.Root
+        description: the structured representation of what will be serialized in property resource_yaml
+      resource_yaml:
+        type: string
+        description: this is the yaml serialization (and eventually transformation) of property resource_def
     artifacts:
       - deployment:
           type: tosca.artifacts.File

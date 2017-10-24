@@ -19,8 +19,17 @@ topology-validation (static)
 The K8S location modifier will:
   - replace all org.alien4cloud.extended.container.types.ContainerRuntime by org.alien4cloud.kubernetes.api.types.AbstractContainer
     - fill it's properties
-  - replace all org.alien4cloud.extended.container.types.ContainerDeploymentUnit by org.alien4cloud.kubernetes.api.types.DeploymentResource
-  - wrap all orphean org.alien4cloud.extended.container.types.ContainerRuntime into a org.alien4cloud.kubernetes.api.types.DeploymentResource
-  - for each container capability of type endpoint, add a org.alien4cloud.kubernetes.api.types.ServiceResource and weave depends_on relationships
+  - replace all org.alien4cloud.extended.container.types.ContainerDeploymentUnit by org.alien4cloud.kubernetes.api.types.AbstractDeployment
+  - wrap all orphean org.alien4cloud.extended.container.types.ContainerRuntime into a org.alien4cloud.kubernetes.api.types.AbstractDeployment
+  - for each container capability of type endpoint, add a org.alien4cloud.kubernetes.api.types.AbstractService and weave depends_on relationships
   - analyse relationships between containers : when a relationship exist between 2 container, if not exist a relationship of type depends_on should be added between surrounding Deployment objects
     - if a relationship already exist between 2 Deployments but in the other way, throw an exception
+
+The K8S final modifier will:
+  - replace all occurences of org.alien4cloud.kubernetes.api.types.Deployment by org.alien4cloud.kubernetes.api.types.DeploymentResource
+      - for each hosted org.alien4cloud.kubernetes.api.types.Container add an entry in the list 'template.spec.containers' fed with 'container.*' property
+  - org.alien4cloud.kubernetes.api.types.Service > org.alien4cloud.kubernetes.api.types.ServiceResource
+
+Find a way to customize the name of a field during serialization
+  - annotate datatype with metadata (we can use description to insert 'annotations')
+  - use these metadata when serializing this data using a specific serializer
