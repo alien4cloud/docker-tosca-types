@@ -6,6 +6,7 @@ Simple TOSCA components to deploy the latest Kubernetes Cluster (v1.8.1)
 ## Kubernetes WebUI
 The webui is accessible to the port 3000, for instance: `https://kubemaster_public_ip:30000`
 
+**At the moment, you can just skip de login page**
 
 ## Cloudify manager
 
