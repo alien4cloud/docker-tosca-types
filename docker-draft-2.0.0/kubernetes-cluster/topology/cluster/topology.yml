@@ -1,0 +1,93 @@
+tosca_definitions_version: alien_dsl_1_4_0
+
+metadata:
+  template_name: org.alien4cloud.kubernetes-cluster-topology
+  template_version: 2.0.0-SNAPSHOT
+  template_author: alien4cloud
+
+description: | 
+  Deploy a Kubernetes cluster with 1 master and 1 node
+
+imports:
+  - tosca-normative-types:1.0.0-SNAPSHOT
+  - org.alien4cloud.kubernetes:2.0.0-SNAPSHOT
+
+topology_template:
+  node_templates:
+    KubeCompute:
+      type: tosca.nodes.Compute
+      capabilities:
+        os:
+          properties:
+            architecture: "x86_64"
+            type: linux
+            distribution: centos
+        scalable:
+          properties:
+            min_instances: 1
+            max_instances: 5
+            default_instances: 1
+        endpoint:
+          properties:
+            secure: true
+            protocol: tcp
+            network_name: PRIVATE
+            initiator: source
+    KubeMeister:
+      type: tosca.nodes.Compute
+      capabilities:
+        os:
+          properties:
+            architecture: "x86_64"
+            type: linux
+            distribution: centos
+        scalable:
+          properties:
+            min_instances: 1
+            max_instances: 1
+            default_instances: 1
+        endpoint:
+          properties:
+            secure: true
+            protocol: tcp
+            network_name: PRIVATE
+            initiator: source
+    KubeMaster:
+      type: org.alien4cloud.kubernetes.nodes.KubeMaster
+      properties:
+        component_version: "1.2.1"
+      requirements:
+        - host:
+            node: DockerMeister
+            capability: org.alien4cloud.kubernetes.capabilities.DockerHost
+            relationship: org.alien4cloud.relationships.kubernetes.HostedOnDocker
+    DockerCompute:
+      type: org.alien4cloud.kubernetes.nodes.DockerEngine
+      requirements:
+        - host:
+            node: KubeCompute
+            capability: tosca.capabilities.Container
+            relationship: tosca.relationships.HostedOn
+    DockerMeister:
+      type: org.alien4cloud.kubernetes.nodes.DockerEngine
+      requirements:
+        - host:
+            node: KubeMeister
+            capability: tosca.capabilities.Container
+            relationship: tosca.relationships.HostedOn
+    KubeNode:
+      type: org.alien4cloud.kubernetes.nodes.KubeNode
+      properties:
+        component_version: "1.2.1"
+      requirements:
+        - host:
+            node: DockerCompute
+            capability: org.alien4cloud.kubernetes.capabilities.DockerHost
+            relationship: org.alien4cloud.relationships.kubernetes.HostedOnDocker
+        - join_master:
+            node: KubeMaster
+            capability: org.alien4cloud.kubernetes.capabilities.MasterCluster
+            relationship: org.alien4cloud.relationships.kubernetes.JoinMaster
+  outputs:
+    KubeMaster_api_endpoint:
+      value: { get_attribute: [ KubeMaster, api_endpoint ] }
