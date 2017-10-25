@@ -1,12 +1,13 @@
 apiVersion: apps/v1beta1 # for versions before 1.7.0 use apps/v1beta1
 kind: Deployment
 metadata:
-  name: ContainerDeploymentUnit_Mongo # Should generate a uniq name
-  labels:
-    anti_affinity_label: ContainerDeploymentUnit_Mongo
+  name: containerdeploymentunit-mongo # Should generate a uniq name
 spec:
   replicas: 1
   template:
+    metadata:
+      labels:
+        anti_affinity_label: containerdeploymentunit-mongo
     spec:
       affinity:
         podAntiAffinity:
@@ -18,10 +19,10 @@ spec:
                 - key: anti_affinity_label
                   operator: In
                   values:
-                  - ContainerDeploymentUnit_Mongo_2
+                  - containerdeploymentunit_mongo_2
               topologyKey: kubernetes.io/hostname
       containers:
-        - name: Mongo
+        - name: mongo
           image: mongo:latest
           resources:
             requests:
