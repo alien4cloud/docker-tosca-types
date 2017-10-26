@@ -227,11 +227,9 @@ topology_template:
           name: ContainerDeploymentUnit_Mongo
         spec:
           replicas: 1
-          labels:
-            anti_affinity_label: ContainerDeploymentUnit_Mongo # added label for anti affinity definition
-        spec:
-          replicas: 1
           template:
+            labels:
+              anti_affinity_label: ContainerDeploymentUnit_Mongo # added label for anti affinity definition
             spec:
               affinity: # added anti affinity section
                 podAntiAffinity:
