@@ -19,7 +19,7 @@ spec:
                 - key: anti_affinity_label
                   operator: In
                   values:
-                  - containerdeploymentunit_mongo_2
+                  - containerdeploymentunit-mongo-2
               topologyKey: kubernetes.io/hostname
       containers:
         - name: mongo

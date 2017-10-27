@@ -11,41 +11,41 @@ K8S_VAR_3=3
 K8S_VAR_4=4
 
 KUBE_RESOURCE_DEPLOYMENT_CONFIG=$(cat <<-END
-apiVersion: apps/v1beta1 # for versions before 1.7.0 use apps/v1beta1
-kind: Deployment
-metadata:
-  name: containerdeploymentunit-mongo # Should generate a uniq name
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        anti_affinity_label: containerdeploymentunit-mongo
-    spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: anti_affinity_label
-                  operator: In
-                  values:
-                  - containerdeploymentunit_mongo_2
-              topologyKey: kubernetes.io/hostname
-      containers:
-        - name: mongo
-          image: mongo:latest
-          resources:
-            requests:
-              memory: 512M
-              cpu: 1.0
-            limits:
-              memory: 512M
-              cpu: 1.0
-          ports:
-          - containerPort: 27017
+{
+    "metadata" : {
+      "name" : "apache-2-du-7861ea01-a281-436d-823b-ee4422ff4e01"
+    },
+    "apiVersion" : "apps/v1beta1",
+    "kind" : "Deployment",
+    "spec" : {
+      "template" : {
+        "metadata" : {
+              "labels": { "apache":"k",
+              "app":"apache-2-du-7861ea01-a281-436d-823b-ee4422ff4e01"
+              }
+        },
+        "spec" : {
+          "containers" : [ {
+            "image" : "httpd:latest",
+            "name" : "apache",
+            "resources" : {
+              "requests" : {
+                "memory" : "128Mi",
+                "cpu" : 1.0
+              },
+              "limits" : {
+                "memory" : "128Mi",
+                "cpu" : 1.0
+              }
+            },
+            "ports" : [ {
+              "containerPort" : 80
+            } ]
+          } ]
+        }
+      }
+    }
+  }
 
 END
 )
@@ -57,7 +57,7 @@ function export_prefixed_variables(){
         _NAME=`echo ${key_value} | cut -d"=" -f1`
         _NAME_WITHOUT_PREFIX=${_NAME#*${PREFIX}}
         _VALUE=`echo ${key_value} | cut -d"=" -f2`
-        
+
         # because 'while/loop' create a subshell we cannot easily export variables from here
         # that's why we generate a file and 'source' this file outside of the loop.
         echo "export ${_NAME_WITHOUT_PREFIX}=${_VALUE}" >> "${VARIABLES_TMP_FILE}"
@@ -71,23 +71,59 @@ function export_prefixed_variables(){
 
 function deploy_resource(){
     DEPLOYMENT_TMP_FILE=$(mktemp)
-    
+
     # create resource deployment definition
     echo "${KUBE_RESOURCE_DEPLOYMENT_CONFIG}" > "${DEPLOYMENT_TMP_FILE}"
 
     # deploy
-    kubectl --kubeconfig "${KUBE_ADMIN_CONFIG_PATH}" create -f "${DEPLOYMENT_TMP_FILE}"
+    DEPLOYMENT_ID=$(kubectl --kubeconfig "${KUBE_ADMIN_CONFIG_PATH}" create -f "${DEPLOYMENT_TMP_FILE}" | sed -r 's/deployment "([a-zA-Z0-9\-]*)" created/\1/')
     export DEPLOYMENT_STATUS=$?
 
     # cleanup
     rm "${DEPLOYMENT_TMP_FILE}"
+
+    exit_if_error
+
+    command="kubectl --kubeconfig "${KUBE_ADMIN_CONFIG_PATH}" get deployment ${DEPLOYMENT_ID} -o=jsonpath={.status.conditions[*].status}"
+
+    wait_until_done_or_exit "$command" 20
 }
 
-function handle_error_and_exit(){
-    if [ "${DEPLOYMENT_STATUS}" -eq 0 ]
+function wait_until_done_or_exit {
+  command=$1
+  max_retries=$2
+
+  retries=0
+  cmd_output=$(echo $command | sh)
+  cmd_code=$?
+  while [ "${cmd_code}" -eq "0" ] && [ "${retries}" -lt "${max_retries}" ] ; do
+    case "${cmd_output}" in 
+    *False*)
+      # At least one condition is not fulfil - keep going
+      ;;
+    *)
+      # All conditions are fufilled
+      echo "Success"
+      break
+      ;;
+    esac
+
+    echo "Waiting deployment ... (${retries}/${max_retries})"
+    sleep 5
+    retries=$((${retries}+1))
+    cmd_output=$(echo $command | sh)
+    cmd_code=$?
+  done
+
+  if [ "${retries}" -eq "${max_retries}" ] ; then
+    echo "Exit with error while executing $command. Reached max retries (=$max_retries)"
+    exit 1
+  fi
+}
+
+function exit_if_error(){
+    if [ "${DEPLOYMENT_STATUS}" -ne 0 ]
     then
-        exit 0
-    else
         echo "Failed to deploy"
         exit "${DEPLOYMENT_STATUS}"
     fi
@@ -95,4 +131,5 @@ function handle_error_and_exit(){
 
 export_prefixed_variables
 deploy_resource
-handle_error_and_exit
+
+exit 0
