@@ -8,4 +8,4 @@ spec:
     port: 3000
   type: NodePort
   selector:
-    app: containerdeploymentunit_mongo # podname
+    app: containerdeploymentunit-mongo # podname
