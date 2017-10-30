@@ -26,6 +26,20 @@ data_types:
         required: false
 
 node_types:
+
+  org.alien4cloud.nodes.Application.Docker.Apache:
+    derived_from: tosca.nodes.Container.Application.DockerContainer
+    capabilities:
+      http_endpoint:
+        type: org.alien4cloud.capabilities.endpoint.docker.Http
+    interfaces:
+      Standard:
+        create:
+          implementation:
+            file: httpd:latest
+            repository: docker
+            type: tosca.artifacts.Deployment.Image.Container.Docker
+
   org.alien4cloud.nodes.Application.Docker.Nodecellar:
     derived_from: tosca.nodes.Container.Application.DockerContainer
     properties:
@@ -106,3 +120,10 @@ capability_types:
       port:
         type: integer
         default: 3000
+
+  org.alien4cloud.capabilities.endpoint.docker.Http:
+    derived_from: org.alien4cloud.capabilities.endpoint.Docker
+    properties:
+      port:
+        type: integer
+        default: 80
