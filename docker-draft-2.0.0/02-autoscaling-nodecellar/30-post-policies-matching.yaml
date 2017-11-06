@@ -10,7 +10,7 @@ description: |
 
 imports:
   - docker-types:1.4.0-SNAPSHOT
-  - tosca-normative-types:1.0.0-SNAPSHOT
+  - tosca-normative-types:1.0.0-ALIEN20SM3
   - org.alien4cloud.kubernetes.api:1.4.0-SNAPSHOT
 
 topology_template:

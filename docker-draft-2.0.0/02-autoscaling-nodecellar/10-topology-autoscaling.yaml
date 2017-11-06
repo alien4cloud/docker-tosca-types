@@ -11,7 +11,7 @@ description: >
 imports:
   - docker-types:1.4.0-SNAPSHOT
   # https://github.com/alien4cloud/tosca-normative-types/blob/tests/2.0.0/normative-types.yml
-  - tosca-normative-types:1.0.0-SNAPSHOT
+  - tosca-normative-types:1.0.0-ALIEN20SM3
   - docker-draft.sandbox.samples:2.0.0-SNAPSHOT
 
 topology_template:

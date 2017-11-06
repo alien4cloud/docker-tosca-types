@@ -8,7 +8,7 @@ metadata:
 description: ""
 
 imports:
-  - tosca-normative-types:1.0.0-SNAPSHOT
+  - tosca-normative-types:1.0.0-ALIEN20SM3
   - org.alien4cloud.kubernetes:2.0.0-SNAPSHOT
 
 topology_template:

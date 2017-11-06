@@ -9,7 +9,7 @@ description: |
   The result of the nodecellar topology after the translation of ContainerUnit and Containers into Kubernetes Deployment nodes.
 
 imports:
-  - tosca-normative-types:1.0.0-SNAPSHOT
+  - tosca-normative-types:1.0.0-ALIEN20SM3
   - org.alien4cloud.kubernetes.api:2.0.0-SNAPSHOT
 
 topology_template:
