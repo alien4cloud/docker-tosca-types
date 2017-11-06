@@ -6,7 +6,7 @@ template_version: 1.4.0-SNAPSHOT
 
 imports:
   - tosca-normative-types:1.0.0-SNAPSHOT
-  - docker-types:2.0.0-SNAPSHOT
+  - docker-types:2.0.0-SM3
 
 description: |
   Contains Kubernetes types used by modifiers and plain kubernetes objects

@@ -2,7 +2,7 @@ tosca_definitions_version: alien_dsl_2_0_0
 
 metadata:
   template_name: 00-20-pre-policies-matching
-  template_version: 2.0.0-SNAPSHOT
+  template_version: 2.0.0-SM3
   template_author: alien4cloud
 
 
@@ -11,7 +11,7 @@ description: |
 
 
 imports:
-  - docker-types:2.0.0-SNAPSHOT
+  - docker-types:2.0.0-SM3
   - tosca-normative-types:1.0.0-SNAPSHOT
   - docker-draft.sandbox.samples:2.0.0-SNAPSHOT
   - org.alien4cloud.kubernetes.api:2.0.0-SNAPSHOT
