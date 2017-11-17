@@ -111,7 +111,7 @@ capability_types:
         default: v1
 
   org.alien4cloud.capabilities.endpoint.docker.Nodecellar:
-    derived_from: org.alien4cloud.capabilities.endpoint.Docker
+    derived_from: tosca.capabilities.Endpoint
     properties:
       docker_bridge_port_mapping:
         type: integer
@@ -122,7 +122,7 @@ capability_types:
         default: 3000
 
   org.alien4cloud.capabilities.endpoint.docker.Http:
-    derived_from: org.alien4cloud.capabilities.endpoint.Docker
+    derived_from: tosca.capabilities.Endpoint
     properties:
       port:
         type: integer

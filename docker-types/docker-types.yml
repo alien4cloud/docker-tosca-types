@@ -142,17 +142,6 @@ capability_types:
     description: >
       The capacity to host and run containerized application image.
 
-  org.alien4cloud.capabilities.endpoint.Docker:
-    derived_from: tosca.capabilities.Endpoint
-    description: >
-      Endpoint generic capability for a Docker container, allowing implementation
-      of Docker bridge networking.
-    properties:
-      docker_bridge_port_mapping:
-        type: integer
-        description: Port used to bridge to the container's endpoint.
-        default: 0
-
   org.alien4cloud.capabilities.DockerVolumeAttachment:
     derived_from: tosca.capabilities.Attachment
     description: >
