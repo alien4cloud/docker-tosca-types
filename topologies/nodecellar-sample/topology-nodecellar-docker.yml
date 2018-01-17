@@ -1,0 +1,77 @@
+tosca_definitions_version: alien_dsl_2_0_0
+description: Alien4Cloud template of a Nodecellar + MongoDB topology using Docker containers.
+template_name: NodecellarDocker
+template_version: 2.0.0-SNAPSHOT
+template_author: alien4cloud
+
+imports:
+  - tosca-normative-types:1.0.0-ALIEN20
+  - docker-types:2.0.0-SNAPSHOT
+  - nodecellar-sample-types:2.0.0-SNAPSHOT
+
+topology_template:
+  node_templates:
+    Mongo:
+      type: org.alien4cloud.nodes.Application.Docker.Mongo
+      properties:
+        mem_share: 128 MB
+        cpu_share: 1.0
+      capabilities:
+        mongo_db:
+          properties:
+            protocol: tcp
+            port: 27017
+            initiator: source
+            network_name: PRIVATE
+            docker_bridge_port_mapping: 0
+            secure: false
+    Nodecellar:
+      type: org.alien4cloud.nodes.Application.Docker.Nodecellar
+      properties:
+        docker_run_cmd: cd /nodecellar && nodejs server.js
+        mem_share: 128 MB
+        docker_env_vars:
+          LOG_LEVEL: INFO
+        cpu_share: 1.0
+      requirements:
+        - mongo_db:
+            node: Mongo
+            capability: org.alien4cloud.capabilities.endpoint.docker.Mongo
+            relationship: tosca.relationships.ConnectsTo
+      capabilities:
+        nodecellar_app:
+          properties:
+            protocol: tcp
+            port: 3000
+            initiator: source
+            network_name: PRIVATE
+            docker_bridge_port_mapping: 0
+            secure: false
+    DataDb:
+      type: org.alien4cloud.nodes.DockerExtVolume
+      # properties:
+      #   size: 1 GB
+      #   volume_name: mongodatadb
+      requirements:
+        - attachment:
+            node: Mongo
+            capability: org.alien4cloud.capabilities.DockerVolumeAttachment
+            relationship: org.alien4cloud.relationships.MountDockerVolume
+            properties:
+              container_path: /data/db
+    ConfigDb:
+      type: org.alien4cloud.nodes.DockerExtVolume
+      # properties:
+      #   size: 1 GB
+      #   volume_name: mongoconfigdb
+      requirements:
+        - attachment:
+            node: Mongo
+            capability: org.alien4cloud.capabilities.DockerVolumeAttachment
+            relationship: org.alien4cloud.relationships.MountDockerVolume
+            properties:
+              container_path: /data/configdb
+  outputs:
+    Nodecellar_URL:
+      description: Nodecellar's URL.
+      value: { get_attribute: [Nodecellar, endpoint] }
