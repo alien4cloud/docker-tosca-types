@@ -17,6 +17,24 @@ artifact_types:
     description: Docker Container Image
     derived_from: tosca.artifacts.Deployment.Image
 
+data_types:
+  org.alien4cloud.extended.container.datatypes.ConfigSetting:
+    derived_from: tosca.datatypes.Root
+    description: Setting for a set of prefixed inputs related to a given folder in the topology and for which a configMap will be mounted on the container (K8S).
+    properties:
+      mount_path:
+        type: string
+        description: where the config map will be mount onto the container.
+        required: true
+      input_prefix:
+        type: string
+        description: the prefix used for the input names.
+        required: true
+      config_path:
+        type: string
+        description: where to to find the files that will be used to create the configMap.
+        required: true
+
 node_types:
 
   org.alien4cloud.extended.container.types.ContainerRuntime:
@@ -104,6 +122,18 @@ node_types:
           relationship: org.alien4cloud.extended.container.relationships.HostedOnContainerRuntime
           # will be [1, 1] since it's not an option
           occurrences: [1, 1]
+
+  tosca.nodes.Container.Application.ConfigurableDockerContainer:
+    abstract: true
+    derived_from: tosca.nodes.Container.Application.DockerContainer
+    description: >
+      A specification of a DockerContainer that is configurable. In K8S, we'll use configMaps.
+    properties:
+      config_settings:
+        type: list
+        required: false
+        entry_schema:
+          type: org.alien4cloud.extended.container.datatypes.ConfigSetting
 
   org.alien4cloud.nodes.DockerExtVolume:
     abstract: true
