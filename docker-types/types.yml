@@ -98,6 +98,15 @@ node_types:
         entry_schema:
           description: Docker run arguments. Allows safe usage of Docker ENTRYPOINT statement in the Dockerfile.
           type: string
+      docker_bash_cmd:
+        type: list
+        entry_schema:
+          type: string
+        required: false
+        default:
+          - "/bin/bash"
+          - "-c"
+        description: Docker run command. Will override the Dockerfile CMD statement.
       docker_run_cmd:
         type: string
         required: false
