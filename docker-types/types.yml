@@ -77,9 +77,19 @@ node_types:
         type: float
         required: true
         default: 1.0
+      cpu_share_limit:
+        type: float
+        required: false
+        default: 1.0
       mem_share:
         type: scalar-unit.size
         required: true
+        default: 128 MB
+        constraints:
+          - greater_or_equal: 0 MB
+      mem_share_limit:
+        type: scalar-unit.size
+        required: false
         default: 128 MB
         constraints:
           - greater_or_equal: 0 MB
@@ -168,6 +178,16 @@ node_types:
           relationship: tosca.relationships.HostedOn
           occurrences: [0, 1]
 
+  org.alien4cloud.nodes.DockerArtifactVolume:
+    derived_from: org.alien4cloud.nodes.DockerExtVolume
+    abstract: true
+    description: |
+      This volume has an artifact, can be used to create a K8S secret from a file or files in a directory for example.
+    tags:
+      icon: /images/volume.png
+    artifacts:
+      - resources:
+          type: tosca.artifacts.File
 
 capability_types:
 
@@ -187,7 +207,6 @@ capability_types:
       Capability to mount a Docker volume
     valid_source_types: [ org.alien4cloud.nodes.DockerExtVolume ]
 
-
 relationship_types:
 
   org.alien4cloud.extended.container.relationships.HostedOnContainerRuntime:
@@ -202,3 +221,11 @@ relationship_types:
         type: string
         required: true
         description: Specifies where the volume is mounted inside the container.
+      container_subPath:
+        type: string
+        required: false
+        description: Path within the volume from which the container's volume should be mounted.
+      readonly:
+        type: boolean
+        required: false
+        default: false
