@@ -80,7 +80,6 @@ node_types:
       cpu_share_limit:
         type: float
         required: false
-        default: 1.0
       mem_share:
         type: scalar-unit.size
         required: true
@@ -90,7 +89,6 @@ node_types:
       mem_share_limit:
         type: scalar-unit.size
         required: false
-        default: 128 MB
         constraints:
           - greater_or_equal: 0 MB
       disk_share:
