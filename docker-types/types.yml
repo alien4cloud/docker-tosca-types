@@ -159,15 +159,6 @@ node_types:
     derived_from: tosca.nodes.BlockStorage
     tags:
       icon: /images/volume.png
-    # properties:
-    #   volume_name:
-    #     type: string
-    #     description: Name of the volume.  If it does not exist, it is created implicitly. Otherwise, the existing volume is reused.
-    #     required: true
-    #   device:
-    #     type: string
-    #     required: false
-    #     default: ""
     requirements:
       - attachment:
           capability: org.alien4cloud.capabilities.DockerVolumeAttachment
@@ -188,6 +179,7 @@ node_types:
     artifacts:
       - resources:
           type: tosca.artifacts.File
+          file: README.md
 
 capability_types:
 
