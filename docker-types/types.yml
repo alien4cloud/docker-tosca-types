@@ -26,6 +26,10 @@ data_types:
         type: string
         description: where the config map will be mount onto the container.
         required: true
+      mount_subPath:
+        type: string
+        description: where the config map will be mount onto the container.
+        required: false        
       input_prefix:
         type: string
         description: the prefix used for the input names.
