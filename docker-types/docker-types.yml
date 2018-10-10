@@ -44,6 +44,14 @@ node_types:
     capabilities:
       host: tosca.capabilities.Container.Docker
       scalable: tosca.capabilities.Scalable
+      
+  org.alien4cloud.extended.container.types.ContainerJobUnit:
+    abstract: true
+    derived_from: tosca.nodes.Root
+    description: >
+      Can host containers to be run as Jobs.
+    capabilities:
+      host: tosca.capabilities.Container.Docker
 
   # rename as ContainerApplication ?
   tosca.nodes.Container.Application.DockerContainer:
