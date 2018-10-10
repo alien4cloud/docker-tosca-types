@@ -3,7 +3,7 @@ tosca_definitions_version: alien_dsl_2_0_0
 metadata:
   template_name: docker-types
   template_author: alien4cloud
-  template_version: 2.0.0
+  template_version: 2.1.0-SNAPSHOT
 
 imports:
   - tosca-normative-types:1.0.0-ALIEN20
@@ -44,7 +44,7 @@ node_types:
     capabilities:
       host: tosca.capabilities.Container.Docker
       scalable: tosca.capabilities.Scalable
-      
+
   org.alien4cloud.extended.container.types.ContainerJobUnit:
     abstract: true
     derived_from: tosca.nodes.Root
