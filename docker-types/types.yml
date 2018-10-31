@@ -3,7 +3,7 @@ tosca_definitions_version: alien_dsl_2_0_0
 metadata:
   template_name: docker-types
   template_author: alien4cloud
-  template_version: 2.0.0
+  template_version: 2.1.0-SNAPSHOT
 
 imports:
   - tosca-normative-types:1.0.0-ALIEN20
@@ -16,6 +16,28 @@ artifact_types:
   tosca.artifacts.Deployment.Image.Container.Docker:
     description: Docker Container Image
     derived_from: tosca.artifacts.Deployment.Image
+
+data_types:
+  org.alien4cloud.extended.container.datatypes.ConfigSetting:
+    derived_from: tosca.datatypes.Root
+    description: Setting for a set of prefixed inputs related to a given folder in the topology and for which a configMap will be mounted on the container (K8S).
+    properties:
+      mount_path:
+        type: string
+        description: where the config map will be mount onto the container.
+        required: true
+      mount_subPath:
+        type: string
+        description: where the config map will be mount onto the container.
+        required: false        
+      input_prefix:
+        type: string
+        description: the prefix used for the input names.
+        required: true
+      config_path:
+        type: string
+        description: where to to find the files that will be used to create the configMap.
+        required: true
 
 node_types:
 
@@ -45,6 +67,14 @@ node_types:
       host: tosca.capabilities.Container.Docker
       scalable: tosca.capabilities.Scalable
 
+  org.alien4cloud.extended.container.types.ContainerJobUnit:
+    abstract: true
+    derived_from: tosca.nodes.Root
+    description: >
+      Can host containers to be run as Jobs.
+    capabilities:
+      host: tosca.capabilities.Container.Docker
+
   # rename as ContainerApplication ?
   tosca.nodes.Container.Application.DockerContainer:
     abstract: true
@@ -59,10 +89,18 @@ node_types:
         type: float
         required: true
         default: 1.0
+      cpu_share_limit:
+        type: float
+        required: false
       mem_share:
         type: scalar-unit.size
         required: true
         default: 128 MB
+        constraints:
+          - greater_or_equal: 0 MB
+      mem_share_limit:
+        type: scalar-unit.size
+        required: false
         constraints:
           - greater_or_equal: 0 MB
       disk_share:
@@ -80,6 +118,15 @@ node_types:
         entry_schema:
           description: Docker run arguments. Allows safe usage of Docker ENTRYPOINT statement in the Dockerfile.
           type: string
+      docker_bash_cmd:
+        type: list
+        entry_schema:
+          type: string
+        required: false
+        default:
+          - "/bin/bash"
+          - "-c"
+        description: Docker run command. Will override the Dockerfile CMD statement.
       docker_run_cmd:
         type: string
         required: false
@@ -105,20 +152,23 @@ node_types:
           # will be [1, 1] since it's not an option
           occurrences: [1, 1]
 
+  tosca.nodes.Container.Application.ConfigurableDockerContainer:
+    abstract: true
+    derived_from: tosca.nodes.Container.Application.DockerContainer
+    description: >
+      A specification of a DockerContainer that is configurable. In K8S, we'll use configMaps.
+    properties:
+      config_settings:
+        type: list
+        required: false
+        entry_schema:
+          type: org.alien4cloud.extended.container.datatypes.ConfigSetting
+
   org.alien4cloud.nodes.DockerExtVolume:
     abstract: true
     derived_from: tosca.nodes.BlockStorage
     tags:
       icon: /images/volume.png
-    # properties:
-    #   volume_name:
-    #     type: string
-    #     description: Name of the volume.  If it does not exist, it is created implicitly. Otherwise, the existing volume is reused.
-    #     required: true
-    #   device:
-    #     type: string
-    #     required: false
-    #     default: ""
     requirements:
       - attachment:
           capability: org.alien4cloud.capabilities.DockerVolumeAttachment
@@ -129,6 +179,17 @@ node_types:
           relationship: tosca.relationships.HostedOn
           occurrences: [0, 1]
 
+  org.alien4cloud.nodes.DockerArtifactVolume:
+    derived_from: org.alien4cloud.nodes.DockerExtVolume
+    abstract: true
+    description: |
+      This volume has an artifact, can be used to create a K8S secret from a file or files in a directory for example.
+    tags:
+      icon: /images/volume.png
+    artifacts:
+      - resources:
+          type: tosca.artifacts.File
+          file: README.md
 
 capability_types:
 
@@ -148,7 +209,6 @@ capability_types:
       Capability to mount a Docker volume
     valid_source_types: [ org.alien4cloud.nodes.DockerExtVolume ]
 
-
 relationship_types:
 
   org.alien4cloud.extended.container.relationships.HostedOnContainerRuntime:
@@ -163,3 +223,11 @@ relationship_types:
         type: string
         required: true
         description: Specifies where the volume is mounted inside the container.
+      container_subPath:
+        type: string
+        required: false
+        description: Path within the volume from which the container's volume should be mounted.
+      readonly:
+        type: boolean
+        required: false
+        default: false
