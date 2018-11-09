@@ -6,8 +6,8 @@ template_author: alien4cloud
 
 imports:
   - tosca-normative-types:1.0.0-ALIEN20
-  - docker-types:2.0.0
-  - nodecellar-sample-types:2.0.0
+  - docker-types:2.1.0-SM7
+  - nodecellar-sample-types:2.1.0-SM7
 
 topology_template:
   node_templates:

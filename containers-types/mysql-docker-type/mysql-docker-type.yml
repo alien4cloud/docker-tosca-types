@@ -8,8 +8,8 @@ description: >
 
 imports:
   - tosca-normative-types:1.0.0-ALIEN20
-  - docker-types:2.0.0
-  - mysql-type:2.0.0
+  - docker-types:2.1.0-SM7
+  - mysql-type:2.1.0-SM7
 
 repositories:
   docker:
@@ -28,7 +28,7 @@ node_types:
           - greater_or_equal: 256 MB
       mysql_root_password:
         type: string
-        default: password 
+        default: password
       mysql_user:
         type: string
         default: foo
