@@ -1,15 +1,15 @@
 tosca_definitions_version: alien_dsl_2_0_0
 template_name: mysql-docker-type
 template_author: alien4cloud
-template_version: 2.0.0
+template_version: 2.1.0-RC1
 
 description: >
   MySQL docker type
 
 imports:
   - tosca-normative-types:1.0.0-ALIEN20
-  - docker-types:2.0.0
-  - mysql-type:2.0.0
+  - docker-types:2.1.0-RC1
+  - mysql-type:2.1.0-RC1
 
 repositories:
   docker:
@@ -28,7 +28,7 @@ node_types:
           - greater_or_equal: 256 MB
       mysql_root_password:
         type: string
-        default: password 
+        default: password
       mysql_user:
         type: string
         default: foo
