@@ -3,7 +3,7 @@ tosca_definitions_version: alien_dsl_2_0_0
 metadata:
   template_name: docker-types
   template_author: alien4cloud
-  template_version: 2.1.0
+  template_version: 2.2.0-SNAPSHOT
 
 imports:
   - tosca-normative-types:1.0.0-ALIEN20
@@ -29,7 +29,7 @@ data_types:
       mount_subPath:
         type: string
         description: where the config map will be mount onto the container.
-        required: false        
+        required: false
       input_prefix:
         type: string
         description: the prefix used for the input names.
